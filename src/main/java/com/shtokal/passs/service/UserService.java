@@ -13,5 +13,6 @@ public interface UserService {
     UserResponse add(UserDTORegister userDTORegister) throws LoginExistsException;
     Boolean login(UserDTO userDTO);
     User findUserByLogin(String login);
-
+    Boolean existsByLogin(String login);
+    String getPasswordHashValueByPassword(String password, Boolean isPasswordSavedAsHash, String salt);
 }

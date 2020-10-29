@@ -5,7 +5,10 @@ import com.shtokal.passs.dto.UserDTO;
 import com.shtokal.passs.dto.UserDTORegister;
 import com.shtokal.passs.dto.UserResponse;
 import com.shtokal.passs.exceptions.LoginExistsException;
+import com.shtokal.passs.model.ERole;
+import com.shtokal.passs.model.Role;
 import com.shtokal.passs.model.User;
+import com.shtokal.passs.repository.RoleRepository;
 import com.shtokal.passs.repository.UserRepository;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
@@ -19,7 +22,9 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 
 @Service
@@ -30,9 +35,11 @@ public class UserServiceImplementation implements UserService {
     private static final String KEY = "Welcome1";
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
-    public UserServiceImplementation(UserRepository userRepository) {
+    public UserServiceImplementation(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
 
@@ -54,6 +61,12 @@ public class UserServiceImplementation implements UserService {
     @Override
     public User findUserByLogin(String login) {
         return userRepository.findByLogin(login);
+    }
+
+
+    @Override
+    public Boolean existsByLogin(String login) {
+        return userRepository.findByLogin(login) != null;
     }
 
 
@@ -114,19 +127,28 @@ public class UserServiceImplementation implements UserService {
         } else return calculateHMAC(password, KEY);
 
     }
+    //не з бази
+    @Override
+    public String getPasswordHashValueByPassword(String password, Boolean isPasswordSavedAsHash, String salt){
+        if (isPasswordSavedAsHash) {
+           return calculateHashSHA512(PEPPER, salt, password);
+        } else return calculateHMAC(password, KEY);
+
+
+    }
 
     @Transactional
     @Override
     public UserResponse add(UserDTORegister userDTORegister) throws LoginExistsException {
-//        if (loginExist(userDTO.getLogin())) {
-//            throw new LoginExistsException(
-//                    "There is an account with that login:" + userDTO.getLogin()
-//            );
-//
-//        }
+
         User user = new User();
         user.setLogin(userDTORegister.getLogin());
         user.setIsPasswordKeptAsHash(userDTORegister.getIsPasswordSavedAsHash());
+        Set<Role> roles = new HashSet<>();
+        Role userRole = roleRepository.save(new Role(ERole.ROLE_USER))  ;
+        roles.add(userRole);
+        user.setRoles(roles);
+
 
         if (userDTORegister.getIsPasswordSavedAsHash()) {
             String salt = generateSalt();
@@ -196,10 +218,7 @@ public class UserServiceImplementation implements UserService {
         }
     }
 
-    private Boolean loginExist(String login) {
 
-        return userRepository.findByLogin(login) != null;
-    }
 
 
     public String generateSalt() {

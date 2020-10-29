@@ -20,11 +20,12 @@ public class Config {
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
-    @Bean
-    PasswordEncoder passwordEncoder()
-    {
-        return new BCryptPasswordEncoder();
-    }
+
+//    @Bean
+//    PasswordEncoder passwordEncoder()
+//    {
+//        return new BCryptPasswordEncoder();
+//    }
 
     @Bean
     public Docket api() {

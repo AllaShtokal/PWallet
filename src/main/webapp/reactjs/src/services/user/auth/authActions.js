@@ -10,7 +10,7 @@ export const authenticateUser = (login, password) => {
         };
         axios.post("http://localhost:8080/api/v1/user/login", user)
             .then((response) => {
-                if (response === true) {
+                if (response.data === true) {
                     dispatch(success(true));
                 } else {
                     dispatch(failure());
