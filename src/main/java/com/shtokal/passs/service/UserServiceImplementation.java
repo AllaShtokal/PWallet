@@ -8,6 +8,7 @@ import com.shtokal.passs.exceptions.LoginExistsException;
 import com.shtokal.passs.model.ERole;
 import com.shtokal.passs.model.Role;
 import com.shtokal.passs.model.User;
+import com.shtokal.passs.repository.PasswordRepository;
 import com.shtokal.passs.repository.RoleRepository;
 import com.shtokal.passs.repository.UserRepository;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -36,10 +37,14 @@ public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordService passwordService;
 
-    public UserServiceImplementation(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImplementation(UserRepository userRepository,
+                                     RoleRepository roleRepository,
+                                     PasswordService passwordService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordService = passwordService;
     }
 
 
@@ -100,7 +105,7 @@ public class UserServiceImplementation implements UserService {
 
     @Transactional
     @Override
-    public Boolean changePassword(ChangeUserPasswordRequest userRequest) {
+    public Boolean changePassword(ChangeUserPasswordRequest userRequest) throws Exception {
 
         User user = userRepository.findByLogin(userRequest.getLogin());
         if (checkIfPasswordsMatch(user.getIsPasswordKeptAsHash(),
@@ -114,8 +119,11 @@ public class UserServiceImplementation implements UserService {
                     userRequest.getIsPasswordSavedAsHash(),
                     userRequest.getNewPassword());
             user.setPassword_hash(newPasswordHash);
-            return true;
-        } else return false;
+            //recrypt all user's passwords here
+            return passwordService.changeAllUsersPasswords(userRequest.getLogin(),
+                    userRequest.getOldPassword(), userRequest.getNewPassword());
+        }
+        else return false;
 
     }
 

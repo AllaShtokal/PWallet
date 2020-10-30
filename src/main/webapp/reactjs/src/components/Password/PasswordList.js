@@ -6,7 +6,7 @@ import {deletePassword} from '../../services/index';
 import './../../assets/css/Style.css';
 import {Card, Table, Image, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faList, faEdit, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {faList, faEdit, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes, faLockOpen, faEye} from '@fortawesome/free-solid-svg-icons';
 import {Link} from 'react-router-dom';
 import MyToast from '../MyToast';
 import axios from 'axios';
@@ -19,7 +19,7 @@ class PasswordList extends Component {
             passwords : [],
             search : '',
             currentPage : 1,
-            passwordsPerPage : 5,
+            passwordsPerPage : 10,
             sortDir: "asc"
         };
     }
@@ -45,11 +45,12 @@ class PasswordList extends Component {
 
     findAllPasswords(currentPage) {
         currentPage -= 1;
-        axios.get("http://localhost:8081/rest/passwords?pageNumber="+currentPage+"&pageSize="+this.state.passwordsPerPage+"&sortBy=price&sortDir="+this.state.sortDir)
+        axios.get("http://localhost:8080/api/v1/password/allbylogin?login="+localStorage.getItem('login')+"&pageNumber="+currentPage+"&pageSize="+this.state.passwordsPerPage+"&sortBy=price&sortDir="+this.state.sortDir)
             .then(response => response.data)
             .then((data) => {
                 this.setState({
-                    passwords: data.content,
+                    passwords: data.content.map(password =>{password.password="******"
+                    return password}),
                     totalPages: data.totalPages,
                     totalElements: data.totalElements,
                     currentPage: data.number + 1
@@ -75,29 +76,48 @@ class PasswordList extends Component {
         });
     };*/
 
-    deletePassword = (passwordId) => {
-        this.props.deletePassword(passwordId);
-        setTimeout(() => {
-            if(this.props.passwordObject != null) {
-                this.setState({"show":true});
-                setTimeout(() => this.setState({"show":false}), 3000);
-                this.findAllPasswords(this.state.currentPage);
-            } else {
-                this.setState({"show":false});
-            }
-        }, 1000);
-        /*axios.delete("http://localhost:8081/rest/passwords/"+bookId)
-            .then(response => {
-                if(response.data != null) {
-                    this.setState({"show":true});
-                    setTimeout(() => this.setState({"show":false}), 3000);
-                    this.setState({
-                        books: this.state.books.filter(book => book.id !== bookId)
-                    });
-                } else {
-                    this.setState({"show":false});
-                }
-            });*/
+    deletePassword = passwordId => {
+
+            const show = {
+                masterPassword: localStorage.getItem('masterPassword'),
+                passwordId: passwordId
+            };
+            console.log(show)
+            axios.post("http://localhost:8080/api/v1/password/show", show)
+                .then(response => {
+
+                        console.log(response.data)
+                        if(response.data != null) {
+                            //console.log(this)
+                            setTimeout(() => this.setState(
+
+                                {passwords: this.state.passwords.map(password => {
+
+                                        if (password.id === passwordId){
+                                            password.password=response.data
+                                        }
+                                        return password
+
+                                    })}), 0);
+                            setTimeout(() => this.setState({
+                                    passwords: this.state.passwords.map(password => {
+
+                                        if (password.id === passwordId){
+                                            password.password= "******"
+                                        }
+                                        return password
+
+                                    })}
+                                ), 3000);
+
+                        } else {
+                            this.setState({"show":false});
+                        }
+                    }
+
+
+                );
+
     };
 
     changePage = event => {
@@ -185,9 +205,6 @@ class PasswordList extends Component {
 
         return (
             <div>
-                <div style={{"display":this.state.show ? "block" : "none"}}>
-                    <MyToast show = {this.state.show} message = {"password Deleted Successfully."} type = {"danger"}/>
-                </div>
                 <Card className={"border border-dark bg-dark text-white"}>
                     <Card.Header>
                         <div style={{"float":"left"}}>
@@ -231,13 +248,16 @@ class PasswordList extends Component {
 
                                             <td>{password.login}</td>
                                             <td>{password.password}</td>
-                                            <td>{password.webUrl}</td>
+                                            <td>{password.web_address}</td>
                                             <td>{password.description}</td>
 
                                             <td>
                                                 <ButtonGroup>
-                                                    <Link to={"edit/"+password.id} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faEdit} /></Link>{' '}
-                                                    <Button size="sm" variant="outline-danger" onClick={this.deletePassword().bind(this, password.id)}><FontAwesomeIcon icon={faTrash} /></Button>
+
+                                                    {/*<Link to={"edit/"+password.id} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faEdit} /></Link>{' '}*/}
+
+                                                    <Button size="sm" variant="outline-danger" onClick={this.deletePassword.bind(this, password.id)}><FontAwesomeIcon icon={faEye} /></Button>
+
                                                 </ButtonGroup>
                                             </td>
                                         </tr>

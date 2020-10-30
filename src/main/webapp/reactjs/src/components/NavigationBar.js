@@ -26,7 +26,7 @@ class NavigationBar extends Component {
                 <Nav className="mr-auto">
                     <Link to={"add"} className="nav-link">Add Password</Link>
                     <Link to={"list"} className="nav-link">Password List</Link>
-                    <Link to={"users"} className="nav-link">User List</Link>
+                    <Link to={"change"} className="nav-link">Change Master Password</Link>
                 </Nav>
                 <Nav className="navbar-right">
                     <Link to={"logout"} className="nav-link" onClick={this.logout}><FontAwesomeIcon icon={faSignOutAlt} /> Logout</Link>

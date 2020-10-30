@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faSignInAlt, faEnvelope, faLock, faUndo} from "@fortawesome/free-solid-svg-icons";
 import {authenticateUser} from '../../services/index';
 
+
 class Login extends Component {
     constructor(props) {
         super(props);

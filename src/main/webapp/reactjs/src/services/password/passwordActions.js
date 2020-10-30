@@ -4,13 +4,13 @@ import axios from 'axios';
 export const savePassword = password => {
     return dispatch => {
         dispatch(savePasswordRequest());
-        axios.post("http://localhost:8081/rest/passwords", password)
-            .then(response => {
-                dispatch(passwordSuccess(response.data));
-            })
-            .catch(error => {
-                dispatch(passwordFailure(error));
-            });
+        // axios.post("http://localhost:8081/rest/passwords", password)
+        //     .then(response => {
+        //         dispatch(passwordSuccess(response.data));
+        //     })
+        //     .catch(error => {
+        //         dispatch(passwordFailure(error));
+        //     });
     };
 };
 
@@ -67,13 +67,6 @@ const deletepasswordRequest = () => {
 export const deletePassword = passwordId => {
     return dispatch => {
         dispatch(deletepasswordRequest());
-        axios.delete("http://localhost:8081/rest/passwords/"+passwordId)
-            .then(response => {
-                dispatch(passwordSuccess(response.data));
-            })
-            .catch(error => {
-                dispatch(passwordFailure(error));
-            });
     };
 };
 

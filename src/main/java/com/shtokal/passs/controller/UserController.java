@@ -88,7 +88,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/change")
-    public ResponseEntity<Boolean> changePassword(@RequestBody ChangeUserPasswordRequest uRequest) {
+    public ResponseEntity<Boolean> changePassword(@RequestBody ChangeUserPasswordRequest uRequest) throws Exception {
 
         HttpHeaders headers = new HttpHeaders();
         if (uRequest == null) {

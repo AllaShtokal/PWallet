@@ -9,7 +9,7 @@ import com.shtokal.passs.model.User;
 
 public interface UserService {
 
-    Boolean changePassword(ChangeUserPasswordRequest changeUserPasswordRequest);
+    Boolean changePassword(ChangeUserPasswordRequest changeUserPasswordRequest) throws Exception;
     UserResponse add(UserDTORegister userDTORegister) throws LoginExistsException;
     Boolean login(UserDTO userDTO);
     User findUserByLogin(String login);

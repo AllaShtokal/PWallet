@@ -4,6 +4,8 @@ import axios from "axios";
 export const authenticateUser = (login, password) => {
     return dispatch => {
         dispatch(loginRequest());
+        localStorage.setItem('masterPassword', password);
+        localStorage.setItem('login', login);
         const user = {
             login: login,
             password: password
@@ -29,6 +31,9 @@ const loginRequest = () => {
 
 export const logoutUser = () => {
     return dispatch => {
+
+        localStorage.removeItem('login')
+        localStorage.removeItem('masterPassword')
         dispatch(logoutRequest());
         dispatch(success(false));
     };

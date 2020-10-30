@@ -12,6 +12,7 @@ import Register from './components/User/Register';
 import Login from './components/User/Login';
 import Footer from './components/Footer';
 import Password from "./components/Password/Password";
+import Change from "./components/User/Change";
 
 export default function App() {
 
@@ -32,6 +33,7 @@ export default function App() {
                         <Route path="/list" exact component={PasswordList}/>
                         <Route path="/users" exact component={UserList}/>
                         <Route path="/register" exact component={Register}/>
+                        <Route path="/change" exact component={Change}/>
                         <Route path="/login" exact component={Login}/>
                         <Route path="/logout" exact component={Login}/>
                     </Switch>

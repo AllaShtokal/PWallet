@@ -5,10 +5,11 @@ import com.shtokal.passs.dto.AddPasswordRequest;
 import com.shtokal.passs.dto.PasswordResponse;
 import com.shtokal.passs.dto.ShowPasswordRequest;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface PasswordService {
     PasswordRequest add(AddPasswordRequest passwordRequest) throws Exception;
-    List<PasswordResponse> findAllByUserLogin(String login);
+    PasswordResponse findAllByUserLogin(String login, Pageable pageable);
     String showPassword(ShowPasswordRequest showPasswordRequest) throws Exception;
+    Boolean changeAllUsersPasswords(String login, String oldMasterPass, String NewMasterPass) throws Exception;
 }

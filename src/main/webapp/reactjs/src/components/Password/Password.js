@@ -24,7 +24,7 @@ class Password extends Component {
     }
 
     initialState = {
-        id:'', login:'', password:'', webURL:'', description:''
+        id:'', login:'', password:'', web_address:'', description:''
     };
 
     componentDidMount() {
@@ -32,35 +32,35 @@ class Password extends Component {
         if(passwordId) {
             this.findpasswordById(passwordId);
         }
-        this.findAllLanguages();
-        this.findAllGenres();
+       // this.findAllLanguages();
+       // this.findAllGenres();
     }
 
-    findAllLanguages = () => {
-        axios.get("http://localhost:8081/rest/passwords/languages")
-            .then(response => response.data)
-            .then((data) => {
-                this.setState({
-                    languages: [{value:'', display:'Select Language'}]
-                        .concat(data.map(language => {
-                            return {value:language, display:language}
-                        }))
-                });
-            });
-    };
+    // findAllLanguages = () => {
+    //     axios.get("http://localhost:8081/rest/passwords/languages")
+    //         .then(response => response.data)
+    //         .then((data) => {
+    //             this.setState({
+    //                 languages: [{value:'', display:'Select Language'}]
+    //                     .concat(data.map(language => {
+    //                         return {value:language, display:language}
+    //                     }))
+    //             });
+    //         });
+    // };
 
-    findAllGenres = () => {
-        axios.get("http://localhost:8081/rest/passwords/genres")
-            .then(response => response.data)
-            .then((data) => {
-                this.setState({
-                    genres: [{value:'', display:'Select Genre'}]
-                        .concat(data.map(genre => {
-                            return {value:genre, display:genre}
-                        }))
-                });
-            });
-    };
+    // findAllGenres = () => {
+    //     axios.get("http://localhost:8081/rest/passwords/genres")
+    //         .then(response => response.data)
+    //         .then((data) => {
+    //             this.setState({
+    //                 genres: [{value:'', display:'Select Genre'}]
+    //                     .concat(data.map(genre => {
+    //                         return {value:genre, display:genre}
+    //                     }))
+    //             });
+    //         });
+    // };
 
     /*findpasswordById = (passwordId) => {
         fetch("http://localhost:8081/rest/passwords/"+passwordId)
@@ -92,7 +92,7 @@ class Password extends Component {
                     id: password.id,
                     login: password.login,
                     password: password.password,
-                    webURL: password.webURL,
+                    web_address: password.web_address,
                     description: password.description
                 });
             }
@@ -157,9 +157,10 @@ class Password extends Component {
         event.preventDefault();
 
         const password = {
+
             login: this.state.login,
             password: this.state.password,
-            webURL: this.state.webURL,
+            web_address: this.state.web_address,
             description: this.state.description
         };
 
@@ -171,16 +172,27 @@ class Password extends Component {
             } else {
                 this.setState({"show":false});
             }
-        }, 2000);
-        /*axios.post("http://localhost:8081/rest/passwords", password)
+        }, 500);
+
+        const pass = {
+            masterPassword: localStorage.getItem('masterPassword'),
+            userLogin: localStorage.getItem('login'),
+            login: password.login,
+            password: password.password,
+            web_address: password.web_address,
+            description: password.description
+        };
+        console.log(pass, "masterPASS object")
+
+        axios.post("http://localhost:8080/api/v1/password/add", pass)
             .then(response => {
                 if(response.data != null) {
                     this.setState({"show":true, "method":"post"});
-                    setTimeout(() => this.setState({"show":false}), 3000);
+                    setTimeout(() => this.setState({"show":false}), 0);
                 } else {
                     this.setState({"show":false});
                 }
-            });*/
+            });
 
         this.setState(this.initialState);
     };
@@ -227,7 +239,7 @@ class Password extends Component {
             id: this.state.id,
             login: this.state.login,
             password: this.state.password,
-            webURL: this.state.webURL,
+            web_address: this.state.web_address,
             description: this.state.description
         };
         this.props.updatepassword(password);
@@ -263,7 +275,7 @@ class Password extends Component {
     };
 
     render() {
-        const {login, password, webURL, description} = this.state;
+        const {login, password, web_address, description} = this.state;
 
         return (
             <div>
@@ -296,11 +308,11 @@ class Password extends Component {
                             </Form.Row>
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridCoverPhotoURL">
-                                    <Form.Label>Cover Photo URL</Form.Label>
+                                    <Form.Label>Web-site URL</Form.Label>
                                     <InputGroup>
                                         <Form.Control required autoComplete="off"
-                                            type="text" name="webURL"
-                                            value={webURL} onChange={this.passwordChange}
+                                            type="text" name="web_address"
+                                            value={web_address} onChange={this.passwordChange}
                                             className={"bg-dark text-white"}
                                             placeholder="Enter Web-site URL" />
                                     </InputGroup>
