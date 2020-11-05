@@ -1,5 +1,7 @@
 package com.shtokal.passs.service;
 
+import com.shtokal.passs.config.HMACAlgorithm;
+import com.shtokal.passs.config.SHAAlgorithm;
 import com.shtokal.passs.dto.ChangeUserPasswordRequest;
 import com.shtokal.passs.dto.UserDTO;
 import com.shtokal.passs.dto.UserDTORegister;
@@ -8,18 +10,13 @@ import com.shtokal.passs.exceptions.LoginExistsException;
 import com.shtokal.passs.model.ERole;
 import com.shtokal.passs.model.Role;
 import com.shtokal.passs.model.User;
-import com.shtokal.passs.repository.PasswordRepository;
 import com.shtokal.passs.repository.RoleRepository;
 import com.shtokal.passs.repository.UserRepository;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import javax.transaction.Transactional;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -31,7 +28,7 @@ import java.util.Set;
 @Service
 public class UserServiceImplementation implements UserService {
 
-    private static final String HMAC_SHA512 = "HmacSHA512";
+
     private static final String PEPPER = "qweqwf&678798sd6f7sd67cysd";
     private static final String KEY = "Welcome1";
 
@@ -76,22 +73,19 @@ public class UserServiceImplementation implements UserService {
 
 
     private Boolean checkIfPasswordsSHA513Match(String salt, String password, String password_hash) {
-        String inputPassHashSHA513 = calculateHashSHA512(PEPPER,salt, password);
+        String inputPassHashSHA513 = SHAAlgorithm.calculateHashSHA512(PEPPER,salt, password);
         return checkIfPasswordsHashMatch(inputPassHashSHA513, password_hash);
 
     }
 
     private Boolean checkIfPasswordsHMASMatch(String password, String password_hash) {
-        String inputPassHMAC = calculateHMAC(password, KEY);
+        String inputPassHMAC = HMACAlgorithm.calculateHMAC(password, KEY);
         return checkIfPasswordsHashMatch(inputPassHMAC, password_hash);
 
     }
 
     private Boolean checkIfPasswordsHashMatch(String calculatedPaswordHash, String dbPasswordHash) {
-        if (calculatedPaswordHash.equals(dbPasswordHash)) {
-            return true;
-        } else return false;
-
+        return calculatedPaswordHash.equals(dbPasswordHash);
 
     }
 
@@ -129,18 +123,18 @@ public class UserServiceImplementation implements UserService {
 
     private String generateNewHashForUser(User user, Boolean isPasswordSavedAsHash, String password) {
         if (isPasswordSavedAsHash) {
-            String salt = generateSalt();
+            String salt = SHAAlgorithm.generateSalt();
             user.setSalt(salt);
-            return calculateHashSHA512(PEPPER, salt, password);
-        } else return calculateHMAC(password, KEY);
+            return SHAAlgorithm.calculateHashSHA512(PEPPER, salt, password);
+        } else return HMACAlgorithm.calculateHMAC(password, KEY);
 
     }
     //не з бази
     @Override
     public String getPasswordHashValueByPassword(String password, Boolean isPasswordSavedAsHash, String salt){
         if (isPasswordSavedAsHash) {
-           return calculateHashSHA512(PEPPER, salt, password);
-        } else return calculateHMAC(password, KEY);
+           return SHAAlgorithm.calculateHashSHA512(PEPPER, salt, password);
+        } else return HMACAlgorithm.calculateHMAC(password, KEY);
 
 
     }
@@ -159,12 +153,12 @@ public class UserServiceImplementation implements UserService {
 
 
         if (userDTORegister.getIsPasswordSavedAsHash()) {
-            String salt = generateSalt();
+            String salt = SHAAlgorithm.generateSalt();
             user.setSalt(salt);
-            user.setPassword_hash(calculateHashSHA512(PEPPER,salt, userDTORegister.getPassword()));
+            user.setPassword_hash(SHAAlgorithm.calculateHashSHA512(PEPPER,salt, userDTORegister.getPassword()));
         } else {
 
-            user.setPassword_hash(calculateHMAC(userDTORegister.getPassword(), KEY));
+            user.setPassword_hash(HMACAlgorithm.calculateHMAC(userDTORegister.getPassword(), KEY));
         }
 
 
@@ -178,63 +172,9 @@ public class UserServiceImplementation implements UserService {
     }
 
 
-    private String calculateHMAC(String text, String key) {
-        Mac sha512Hmac;
-        String result = "";
-        try {
-            final byte[] byteKey = key.getBytes(StandardCharsets.UTF_8);
-            sha512Hmac = Mac.getInstance(HMAC_SHA512);
-            SecretKeySpec keySpec = new SecretKeySpec(byteKey, HMAC_SHA512);
-            sha512Hmac.init(keySpec);
-            byte[] macData = sha512Hmac.doFinal(text.getBytes(StandardCharsets.UTF_8));
-            // Can either base64 encode or put it right into hex
-            result = java.util.Base64.getEncoder().encodeToString(macData);
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            e.printStackTrace();
-        } finally {
-        }
-        return result;
-    }
-
-
-    private String calculateHashSHA512(String pepper, String salt, String text) {
-
-        return calculateSHA512(pepper + salt + text);
-    }
-
-
-    private String calculateSHA512(String text) {
-        try {
-            //get an instance of SHA-512
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-            //calculate message digest of the input string  - returns byte array
-            byte[] messageDigest = md.digest(text.getBytes());
-            // Convert byte array into signum representation
-            BigInteger no = new BigInteger(1, messageDigest);
-            // Convert message digest into hex value
-            String hashtext = no.toString(16);
-            // Add preceding 0s to make it 32 bit
-            while (hashtext.length() < 32) {
-                hashtext = "0" + hashtext;
-            }
-            // return the HashText
-            return hashtext;
-        }
-        // If wrong message digest algorithm was specified
-        catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 
 
 
-    public String generateSalt() {
-        final Random r = new SecureRandom();
-        byte[] salt = new byte[32];
-        r.nextBytes(salt);
-        String encodedSalt = Base64.encodeBase64String(salt);
-        return encodedSalt;
-    }
 
 }

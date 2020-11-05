@@ -36,10 +36,8 @@ public class PasswordServiceImplementation implements PasswordService {
 
         Password password = new Password();
         password.setLogin(addPasswordRequest.getLogin());
-        //зашифровать пароль потом
         Key key = PassAlgor.generateKey(addPasswordRequest.getMasterPassword());
         password.setPassword(PassAlgor.encrypt(addPasswordRequest.getPassword(), key));
-
         password.setWeb_address(addPasswordRequest.getWeb_address());
         password.setDescription(addPasswordRequest.getDescription());
         userByLogin.addPassword(password);
@@ -68,8 +66,6 @@ public class PasswordServiceImplementation implements PasswordService {
         passwordRespons.setTatalElements(totalElements.toString());
         passwordRespons.setTatalPages(totalPages.toString());
         passwordRespons.setNumber(String.valueOf(pageable.getPageNumber()));
-
-
         return passwordRespons;
     }
 

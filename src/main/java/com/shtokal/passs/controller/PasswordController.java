@@ -47,7 +47,7 @@ public class PasswordController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         String password = this.passwordService.showPassword(showPasswordRequest);
-        return new ResponseEntity<>(password, headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(password, headers, HttpStatus.OK);
     }
 
 
