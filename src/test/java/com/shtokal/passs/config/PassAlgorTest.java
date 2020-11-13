@@ -1,23 +1,12 @@
 package com.shtokal.passs.config;
-
-import org.springframework.boot.test.context.SpringBootTest;
 import org.testng.annotations.Test;
-
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import static org.testng.Assert.assertEquals;
-
 
 public class PassAlgorTest {
 
-    @Test
-    public void testGenerateKey() throws Exception {
-
-        final Key result = PassAlgor.generateKey("password");
-        assertEquals(result.toString(), "javax.crypto.spec.SecretKeySpec@"+ "fffe9340");
-    }
 
     @Test
     public void testEncrypt() throws Exception {
@@ -39,6 +28,7 @@ public class PassAlgorTest {
         String text = "text";
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] messageDigest = md.digest(text.getBytes());
+
         assertEquals(messageDigest, PassAlgor.calculateMD5(text));
     }
 }

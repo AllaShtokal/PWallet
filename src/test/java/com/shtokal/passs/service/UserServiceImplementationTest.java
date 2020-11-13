@@ -39,21 +39,6 @@ public class UserServiceImplementationTest {
     }
 
     @Test
-    public void testLogin() {
-        final UserDTO userDTO = new UserDTO();
-        userDTO.setLogin("login");
-        userDTO.setPassword("password");
-        User user = new User();
-        user.setLogin("login");
-
-        when(mockUserRepository.findByLogin("login")).thenReturn(user);
-
-        final Boolean result = userServiceImplementationUnderTest.login(userDTO);
-
-        assertNotEquals(result,true);
-    }
-
-    @Test
     public void testFindUserByLogin() {
 
         User user = new User();
@@ -94,6 +79,21 @@ public class UserServiceImplementationTest {
         assertTrue(result);
     }
 
+    @Test
+    public void testLogin() {
+        final UserDTO userDTO = new UserDTO();
+        userDTO.setLogin("login");
+        userDTO.setPassword("password");
+        User user = new User();
+        user.setLogin("login");
+
+        when(mockUserRepository.findByLogin("login")).thenReturn(user);
+
+        final Boolean result = userServiceImplementationUnderTest.login(userDTO);
+
+        assertNotEquals(result,true);
+    }
+
 
     @Test
     public void testGetPasswordHashValueByPassword() {
@@ -121,12 +121,12 @@ public class UserServiceImplementationTest {
 
         when(mockRoleRepository.save(any(Role.class))).thenReturn(new Role(ERole.ROLE_USER));
         when(mockUserRepository.save(any(User.class))).thenReturn(user);
+
         final UserResponse result = userServiceImplementationUnderTest.add(userDTORegister);
 
         UserResponse userResp = new UserResponse();
         userResp.setUserLogin(user.getLogin());
         userResp.setUserId(user.getId().toString());
-
 
         assertEquals(result, userResp);
 
