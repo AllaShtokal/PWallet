@@ -8,20 +8,15 @@ import com.shtokal.passs.dto.UserDTORegister;
 import com.shtokal.passs.dto.UserResponse;
 import com.shtokal.passs.exceptions.LoginExistsException;
 import com.shtokal.passs.model.ERole;
+import com.shtokal.passs.model.Log;
 import com.shtokal.passs.model.Role;
 import com.shtokal.passs.model.User;
 import com.shtokal.passs.repository.RoleRepository;
 import com.shtokal.passs.repository.UserRepository;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 
@@ -35,13 +30,15 @@ public class UserServiceImplementation implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordService passwordService;
+    private final LogService logService;
 
     public UserServiceImplementation(UserRepository userRepository,
                                      RoleRepository roleRepository,
-                                     PasswordService passwordService) {
+                                     PasswordService passwordService, LogService logService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordService = passwordService;
+        this.logService = logService;
     }
 
 
@@ -73,7 +70,7 @@ public class UserServiceImplementation implements UserService {
 
 
     private Boolean checkIfPasswordsSHA513Match(String salt, String password, String password_hash) {
-        String inputPassHashSHA513 = SHAAlgorithm.calculateHashSHA512(PEPPER,salt, password);
+        String inputPassHashSHA513 = SHAAlgorithm.calculateHashSHA512(PEPPER, salt, password);
         return checkIfPasswordsHashMatch(inputPassHashSHA513, password_hash);
 
     }
@@ -116,8 +113,7 @@ public class UserServiceImplementation implements UserService {
             //recrypt all user's passwords here
             return passwordService.changeAllUsersPasswords(userRequest.getLogin(),
                     userRequest.getOldPassword(), userRequest.getNewPassword());
-        }
-        else return false;
+        } else return false;
 
     }
 
@@ -129,11 +125,12 @@ public class UserServiceImplementation implements UserService {
         } else return HMACAlgorithm.calculateHMAC(password, KEY);
 
     }
+
     //не з бази
     @Override
-    public String getPasswordHashValueByPassword(String password, Boolean isPasswordSavedAsHash, String salt){
+    public String getPasswordHashValueByPassword(String password, Boolean isPasswordSavedAsHash, String salt) {
         if (isPasswordSavedAsHash) {
-           return SHAAlgorithm.calculateHashSHA512(PEPPER, salt, password);
+            return SHAAlgorithm.calculateHashSHA512(PEPPER, salt, password);
         } else return HMACAlgorithm.calculateHMAC(password, KEY);
 
 
@@ -147,7 +144,7 @@ public class UserServiceImplementation implements UserService {
         user.setLogin(userDTORegister.getLogin());
         user.setIsPasswordKeptAsHash(userDTORegister.getIsPasswordSavedAsHash());
         Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.save(new Role(ERole.ROLE_USER))  ;
+        Role userRole = roleRepository.save(new Role(ERole.ROLE_USER));
         roles.add(userRole);
         user.setRoles(roles);
 
@@ -155,7 +152,7 @@ public class UserServiceImplementation implements UserService {
         if (userDTORegister.getIsPasswordSavedAsHash()) {
             String salt = SHAAlgorithm.generateSalt();
             user.setSalt(salt);
-            user.setPassword_hash(SHAAlgorithm.calculateHashSHA512(PEPPER,salt, userDTORegister.getPassword()));
+            user.setPassword_hash(SHAAlgorithm.calculateHashSHA512(PEPPER, salt, userDTORegister.getPassword()));
         } else {
 
             user.setPassword_hash(HMACAlgorithm.calculateHMAC(userDTORegister.getPassword(), KEY));
@@ -166,15 +163,10 @@ public class UserServiceImplementation implements UserService {
         UserResponse userResponse = new UserResponse();
         userResponse.setUserId(user.getId().toString());
         userResponse.setUserLogin(user.getLogin());
-        return  userResponse;
+        return userResponse;
 
 
     }
-
-
-
-
-
 
 
 }

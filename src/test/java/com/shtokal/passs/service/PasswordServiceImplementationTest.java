@@ -33,7 +33,6 @@ public class PasswordServiceImplementationTest {
     private UserRepository mockUserService;
     @Mock
     private PasswordRepository mockPasswordRepository;
-
     private PasswordServiceImplementation passwordServiceImplementationUnderTest;
 
     @BeforeMethod
@@ -122,14 +121,13 @@ public class PasswordServiceImplementationTest {
 
         PasswordResponse passwordResponse = new PasswordResponse();
 
-        PasswordResponse expected = result;
         passwordResponse.setTatalPages("1");
         passwordResponse.setTatalElements("1");
         passwordResponse.setNumber("0");
         List<PasswordsContent> content = new ArrayList<>();
         content.add(passwordsContent);
 
-        assertEquals(result, expected);
+        assertEquals(result, passwordResponse);
 
 
     }

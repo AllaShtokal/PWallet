@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Repository
-public interface PasswordRepository extends JpaRepository<Password, Long> {
+    public interface PasswordRepository extends JpaRepository<Password, Long> {
 
     List<Password> findAllByUser_Login(String login, Pageable pageable);
     List<Password> findAllByUser_Login(String login);

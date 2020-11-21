@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+
 import static javax.persistence.GenerationType.AUTO;
 
 
@@ -14,7 +15,6 @@ import static javax.persistence.GenerationType.AUTO;
 @Getter
 @Setter
 public class User {
-
     @Id
     @GeneratedValue(strategy = AUTO)
     @Column(name = "id")
@@ -33,17 +33,18 @@ public class User {
     private Boolean isPasswordKeptAsHash;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_roles",
+    @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy="user")
-    private Set<Password> passwords= new HashSet<>();
+    @OneToMany(mappedBy = "user")
+    private Set<Password> passwords = new HashSet<>();
 
     public void addPassword(Password password) {
         this.passwords.add(password);
         password.setUser(this);
-
     }
+
+
 }

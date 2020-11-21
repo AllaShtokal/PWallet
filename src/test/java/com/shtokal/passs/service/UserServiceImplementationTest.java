@@ -29,13 +29,15 @@ public class UserServiceImplementationTest {
     private RoleRepository mockRoleRepository;
     @Mock
     private PasswordService mockPasswordService;
+    @Mock
+    private LogService logService;
 
     private UserServiceImplementation userServiceImplementationUnderTest;
 
     @BeforeMethod
     public void setUp() {
         initMocks(this);
-        userServiceImplementationUnderTest = new UserServiceImplementation(mockUserRepository, mockRoleRepository, mockPasswordService);
+        userServiceImplementationUnderTest = new UserServiceImplementation(mockUserRepository, mockRoleRepository, mockPasswordService, logService);
     }
 
     @Test
