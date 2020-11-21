@@ -27,9 +27,14 @@ public class Log {
     @Column(name = "ip_address")
     private String ipAddress;
 
+    @Column(name = "login")
+    private String login;
+
     @Column(name = "time")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime time;
+
+
 
 
 }

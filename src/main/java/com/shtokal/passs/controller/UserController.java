@@ -1,6 +1,8 @@
 package com.shtokal.passs.controller;
 
 import com.shtokal.passs.dto.*;
+import com.shtokal.passs.model.Log;
+import com.shtokal.passs.repository.LogRepository;
 import com.shtokal.passs.security.JwtUtils;
 import com.shtokal.passs.service.LogService;
 import com.shtokal.passs.service.UserService;
@@ -44,7 +46,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<Integer> login(@RequestBody UserDTO userDTO,
+    public ResponseEntity<LoginResponse> login(@RequestBody UserDTO userDTO,
                                          HttpServletRequest request) {
         if (userDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -55,9 +57,35 @@ public class UserController {
         String remoteAddr = request.getRemoteAddr();
         Boolean result = userService.login(userDTO);
 
-        Integer response = logService.getLoginStatus(result, remoteAddr);
+        Integer status = logService.getLoginStatus(userDTO.getLogin(), result, remoteAddr);
 
-        return ResponseEntity.ok(response);
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setStatus(status.toString());
+        Log lastSuccessful = logService.findLastSuccessful(remoteAddr, userDTO.getLogin());
+        Log lastUnSuccessful = logService.findLastUnSuccessful(remoteAddr, userDTO.getLogin());
+
+        if(lastSuccessful!=null)
+        loginResponse.setLastSuccess(lastSuccessful.getTime() );
+        else  loginResponse.setLastSuccess(null);
+
+        if(lastUnSuccessful!=null)
+            loginResponse.setLastUnsuccessful(lastUnSuccessful.getTime() );
+        else  loginResponse.setLastUnsuccessful(null);
+
+
+
+        return ResponseEntity.ok(loginResponse);
+
+    }
+
+    @PostMapping(value = "/reset")
+    public ResponseEntity<Boolean> resetIp(HttpServletRequest request) {
+
+        String remoteAddr = request.getRemoteAddr();
+        logService.resetIp(remoteAddr);
+
+
+        return ResponseEntity.ok(true);
 
     }
 
