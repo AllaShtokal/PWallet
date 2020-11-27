@@ -9,5 +9,5 @@ public interface LogService {
     Log findLastSuccessful(String ipAddress, String login);
     Log findLastUnSuccessful(String ipAddress, String login);
 
-    void resetIp(String remoteAddr);
+    Log resetIp(String remoteAddr);
 }

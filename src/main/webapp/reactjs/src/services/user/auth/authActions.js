@@ -10,16 +10,18 @@ export const authenticateUser = (login, password) => {
             login: login,
             password: password
         };
+
+
         axios.post("http://localhost:8080/api/v1/user/login", user)
             .then((response) => {
-                if (response.data === 0) {
-                    dispatch(success(true));
-                } else {
-                    dispatch(failure());
-                }
+
+                if (response.data.status === "0") {
+                    dispatch(success(response.data.status));
+                } else
+              {
+                    dispatch(failure(response.data));}
+
             });
-
-
     };
 };
 
@@ -28,17 +30,15 @@ const loginRequest = () => {
         type: LOGIN_REQUEST
     };
 };
-
 export const logoutUser = () => {
     return dispatch => {
 
         localStorage.removeItem('login')
         localStorage.removeItem('masterPassword')
         dispatch(logoutRequest());
-        dispatch(success(false));
+        dispatch(success("1"));
     };
 };
-
 const logoutRequest = () => {
     return {
         type: LOGOUT_REQUEST
@@ -51,10 +51,13 @@ const success = isLoggedIn => {
         payload: isLoggedIn
     };
 };
-
-const failure = () => {
+const failure = loginResponse => {
     return {
         type: FAILURE,
-        payload: false
+        payload: {status:loginResponse.status,
+            lastSuccess: loginResponse.lastSuccess,
+            lastUnsuccessful: loginResponse.lastUnsuccessful
+        }
     };
 };
+

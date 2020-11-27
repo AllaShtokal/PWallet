@@ -39,7 +39,7 @@ class NavigationBar extends Component {
                 <Link to={""} className="navbar-brand">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_icon_1.png" width="25" height="25" alt="brand"/> Password Wallet
                 </Link>
-                {this.props.auth.isLoggedIn ? userLinks : guestLinks}
+                {this.props.auth.isLoggedIn === "0" ? userLinks : guestLinks}
             </Navbar>
         );
     };

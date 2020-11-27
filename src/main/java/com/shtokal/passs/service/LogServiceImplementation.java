@@ -2,7 +2,6 @@ package com.shtokal.passs.service;
 
 import com.shtokal.passs.model.Log;
 import com.shtokal.passs.repository.LogRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,11 +11,9 @@ import java.time.LocalDateTime;
 public class LogServiceImplementation implements LogService {
 
     private final LogRepository logRepository;
-    private final ModelMapper modelMapper;
 
-    public LogServiceImplementation(LogRepository logRepository, ModelMapper modelMapper) {
+    public LogServiceImplementation(LogRepository logRepository) {
         this.logRepository = logRepository;
-        this.modelMapper = modelMapper;
     }
 
 
@@ -91,15 +88,16 @@ public class LogServiceImplementation implements LogService {
     }
 
     @Override
-    public void resetIp(String remoteAddr) {
+    public Log resetIp(String remoteAddr) {
         if (logRepository.findFirstByIpAddress(remoteAddr) != null) {
             Log log = new Log();
             log.setIpAddress(remoteAddr);
             log.setTime(LocalDateTime.now());
             log.setLogin("login-reset");
             log.setAttempt(0);
-            logRepository.save(log);
+            return logRepository.save(log);
         }
+        else return null;
     }
 
     private Boolean timeChek(Log logByIp) {

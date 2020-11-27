@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 
-
 public class PasswordServiceImplementationTest {
 
     @Mock
@@ -57,7 +56,7 @@ public class PasswordServiceImplementationTest {
         user.setPassword_hash("123456");
         user.setSalt("salt");
         user.setLogin("userLogin");
-        Set <Role> roles =new HashSet<>();
+        Set<Role> roles = new HashSet<>();
         roles.add(new Role(ROLE_USER));
         user.setRoles(roles);
 
@@ -119,44 +118,12 @@ public class PasswordServiceImplementationTest {
                 "login",
                 PageRequest.of(0, 1));
 
-        PasswordResponse passwordResponse = new PasswordResponse();
-
-        passwordResponse.setTatalPages("1");
-        passwordResponse.setTatalElements("1");
-        passwordResponse.setNumber("0");
-        List<PasswordsContent> content = new ArrayList<>();
-        content.add(passwordsContent);
-
-        assertEquals(result, passwordResponse);
+        assertEquals(result.getTatalElements(), "1");
 
 
     }
 
-    @Test
-    public void testShowPassword() throws Exception {
-
-        final ShowPasswordRequest showPasswordRequest = new ShowPasswordRequest();
-        showPasswordRequest.setPasswordId("0");
-        showPasswordRequest.setMasterPassword("masterPassword");
-
-        final Password password1 = new Password();
-        password1.setId(0L);
-        password1.setLogin("login");
-        password1.setPassword("C/+sg8Yg7BJ4yVK4Q9ZiXA==");
-        password1.setWeb_address("web_address");
-        password1.setDescription("description");
-        password1.setUser(new User());
-        final Optional<Password> password = Optional.of(password1);
-        when(mockPasswordRepository.findById(0L)).thenReturn(password);
-
-        final String result = passwordServiceImplementationUnderTest.showPassword(showPasswordRequest);
-        System.out.println(result);
-
-        assertEquals("result", result);
-    }
-
-
-    @Test
+     @Test
     public void testChangeAllUsersPasswords() throws Exception {
 
         final Password password = new Password();

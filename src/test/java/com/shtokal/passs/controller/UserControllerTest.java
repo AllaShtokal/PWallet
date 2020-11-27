@@ -1,10 +1,8 @@
 package com.shtokal.passs.controller;
 
-import com.shtokal.passs.dto.ChangeUserPasswordRequest;
-import com.shtokal.passs.dto.UserDTO;
-import com.shtokal.passs.dto.UserDTORegister;
-import com.shtokal.passs.dto.UserResponse;
+import com.shtokal.passs.dto.*;
 import com.shtokal.passs.exceptions.LoginExistsException;
+import com.shtokal.passs.model.Log;
 import com.shtokal.passs.security.JwtUtils;
 import com.shtokal.passs.service.LogService;
 import com.shtokal.passs.service.UserService;
@@ -18,6 +16,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -62,25 +62,41 @@ public class UserControllerTest {
         HttpHeaders headers = new HttpHeaders();
         assertEquals(userControllerUnderTest.save(userDTORegister),
                 new ResponseEntity<>(userResponse,headers,HttpStatus.CREATED) );
-
-
     }
 
+    @Test
+    public void testLogin() {
 
-//    @Test
-//    public void testLogin() {
-//        final UserDTO userDTO = new UserDTO();
-//        userDTO.setLogin("login");
-//        userDTO.setPassword("password");
-//
-//        final ResponseEntity<Boolean> expectedResult = new ResponseEntity<>(false, HttpStatus.OK);
-//
-//        when(mockUserService.login(any(UserDTO.class), request)).thenReturn(false);
-//
-//        final ResponseEntity<Integer> result = userControllerUnderTest.login(userDTO,request);
-//
-//        assertEquals(expectedResult, result);
-//    }
+        final UserDTO userDTO = new UserDTO();
+        userDTO.setLogin("login");
+        userDTO.setPassword("password");
+
+        final HttpServletRequest request = new MockHttpServletRequest();
+        when(mockUserService.existsByLogin("login")).thenReturn(true);
+        when(mockUserService.login(any(UserDTO.class))).thenReturn(true);
+        when(mockLogService.getLoginStatus("login", false, "remoteAddr")).thenReturn(0);
+
+        final Log log = new Log();
+        log.setId(0L);
+        log.setAttempt(0);
+        log.setIpAddress("ipAddress");
+        log.setLogin("login");
+        log.setTime(LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+        when(mockLogService.findLastSuccessful("ipAddress", "login")).thenReturn(log);
+
+        final Log log1 = new Log();
+        log1.setId(0L);
+        log1.setAttempt(0);
+        log1.setIpAddress("ipAddress");
+        log1.setLogin("login");
+        log1.setTime(LocalDateTime.of(2020, 1, 1, 0, 0, 0));
+        when(mockLogService.findLastUnSuccessful("ipAddress", "login")).thenReturn(log1);
+
+        final ResponseEntity<LoginResponse> result = userControllerUnderTest.login(userDTO, request);
+        HttpStatus resultStatusCode = result.getStatusCode();
+
+        assertEquals(resultStatusCode.toString(), "200 OK");
+    }
 
     @Test
     public void testChangePassword() throws Exception {

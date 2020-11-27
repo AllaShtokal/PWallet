@@ -1,7 +1,9 @@
 import {LOGIN_REQUEST, LOGOUT_REQUEST, SUCCESS, FAILURE} from './authTypes';
 
 const initialState = {
-    isLoggedIn: ''
+    isLoggedIn: '',
+    lastSuccess: '',
+    lastUnsuccessful: ''
 };
 
 const reducer = (state = initialState, action) => {
@@ -16,11 +18,15 @@ const reducer = (state = initialState, action) => {
             };
         case SUCCESS: 
             return {
-                isLoggedIn: action.payload
+                isLoggedIn: action.payload,
+
+
             };
         case FAILURE: 
             return {
-                isLoggedIn: action.payload
+                isLoggedIn: action.payload.status,
+                lastSuccess: action.payload.lastSuccess,
+                lastUnsuccessful: action.payload.lastUnsuccessful
             };
         default:
             return state;
