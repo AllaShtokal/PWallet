@@ -1,12 +1,26 @@
 import React, {Component} from 'react';
-
+import Modal from 'react-awesome-modal';
 import {connect} from 'react-redux';
-import {deletePassword} from '../../services/index';
+import {showPassword} from '../../services/index';
 
 import './../../assets/css/Style.css';
 import {Card, Table, Image, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faList, faEdit, faTrash, faStepBackward, faFastBackward, faStepForward, faFastForward, faSearch, faTimes, faLockOpen, faEye} from '@fortawesome/free-solid-svg-icons';
+import {
+    faList,
+    faEdit,
+    faTrash,
+    faStepBackward,
+    faFastBackward,
+    faStepForward,
+    faFastForward,
+    faSearch,
+    faTimes,
+    faHistory,
+    faLockOpen,
+    faEye,
+    faShare
+} from '@fortawesome/free-solid-svg-icons';
 import {Link} from 'react-router-dom';
 import MyToast from '../MyToast';
 import axios from 'axios';
@@ -16,11 +30,16 @@ class PasswordList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            passwords : [],
-            search : '',
-            currentPage : 1,
-            passwordsPerPage : 10,
-            sortDir: "asc"
+            passwords: [],
+            search: '',
+            currentPage: 1,
+            passwordsPerPage: 10,
+            sortDir: "asc",
+            visible: false,
+            share: false,
+            sharedLogin: "",
+            mode: localStorage.getItem("mode"),
+            isAlertModeVisible: false
         };
     }
 
@@ -35,22 +54,18 @@ class PasswordList extends Component {
         this.findAllPasswords(this.state.currentPage);
     }
 
-    /*findAllBooks() {
-        fetch("http://localhost:8081/rest/books")
-            .then(response => response.json())
-            .then((data) => {
-                this.setState({books: data});
-            });
-    };*/
 
     findAllPasswords(currentPage) {
+
         currentPage -= 1;
-        axios.get("http://localhost:8080/api/v1/password/allbylogin?login="+localStorage.getItem('login')+"&pageNumber="+currentPage+"&pageSize="+this.state.passwordsPerPage+"&sortBy=price&sortDir="+this.state.sortDir)
+        axios.get("http://localhost:8080/api/v1/password/allbylogin?login=" + localStorage.getItem('login') + "&pageNumber=" + currentPage + "&pageSize=" + this.state.passwordsPerPage + "&sortBy=price&sortDir=" + this.state.sortDir)
             .then(response => response.data)
             .then((data) => {
                 this.setState({
-                    passwords: data.content.map(password =>{password.password="******"
-                    return password}),
+                    passwords: data.content.map(password => {
+                        password.password = "******"
+                        return password
+                    }),
                     totalPages: data.totalPages,
                     totalElements: data.totalElements,
                     currentPage: data.number + 1
@@ -58,71 +73,121 @@ class PasswordList extends Component {
             });
     };
 
-    /*deleteBook = (bookId) => {
-        fetch("http://localhost:8081/rest/books/"+bookId, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then((book) => {
-            if(book) {
-                this.setState({"show":true});
-                setTimeout(() => this.setState({"show":false}), 3000);
-                this.setState({
-                    books: this.state.books.filter(book => book.id !== bookId)
-                });
-            } else {
-                this.setState({"show":false});
-            }
-        });
-    };*/
+    deletePassword = (passwordId) => {
+        if (this.state.mode === 'write') {
 
-    deletePassword = passwordId => {
 
-            const show = {
-                masterPassword: localStorage.getItem('masterPassword'),
-                passwordId: passwordId
-            };
-            console.log(show)
-            axios.post("http://localhost:8080/api/v1/password/show", show)
-                .then(response => {
+            axios.put("http://localhost:8080/api/v1/password/delete?passwordId=" + passwordId + "&userLogin=" + localStorage.getItem('login'))
+                .then((response) => {
 
-                        console.log(response.data)
-                        if(response.data != null) {
-                            //console.log(this)
-                            setTimeout(() => this.setState(
+                    console.log(response)
 
-                                {passwords: this.state.passwords.map(password => {
-
-                                        if (password.id === passwordId){
-                                            password.password=response.data
-                                        }
-                                        return password
-
-                                    })}), 0);
-                            setTimeout(() => this.setState({
-                                    passwords: this.state.passwords.map(password => {
-
-                                        if (password.id === passwordId){
-                                            password.password= "******"
-                                        }
-                                        return password
-
-                                    })}
-                                ), 3000);
-
+                    if (response.data) {
+                        if (response) {
+                            this.setState({"show": true});
+                            setTimeout(() => this.setState({"show": false}), 3000);
+                            this.setState({
+                                passwords: this.state.passwords.filter(password => password.id !== passwordId)
+                            });
                         } else {
-                            this.setState({"show":false});
+                            this.setState({"show": false});
                         }
+                    } else {alert("You cannot delete shared with you password!")}
+                });
+        } else {
+            alert("Deleting is not allowed, because it is Read Only Mode!")
+            this.setState({"isAlertModeVisible": true});
+            setTimeout(() => this.setState({"isAlertModeVisible": false}), 4000);
+
+        }
+
+    };
+
+    sharePassword = passwordId => {
+
+        const share = {
+            userLogin: localStorage.getItem('login'),
+            passwordId: passwordId,
+            sharedLogin: this.state.sharedLogin
+        };
+
+        axios.post("http://localhost:8080/api/v1/password/share", share)
+            .then(response => {
+                    if (response.data === true) {
+
+                        this.setState({share: true});
+
+                        setTimeout(() => this.setState({"share": false}), 3000);
+                    } else {
+                        this.setState({"share": false});
+                        alert("You have to be an owner to share password!")
                     }
+                }
+            );
+
+    };
+    editPasswordHandler = e => {
+        if (this.state.mode === 'read') {
+            e.preventDefault();
+
+            alert("Modifying is not allowed, because it is Read Only Mode!")
+
+        }
+
+    };
+
+    historyPasswordHandler = e => {
+
+    };
 
 
-                );
+
+    showPassword = passwordId => {
+
+        const show = {
+            masterPassword: localStorage.getItem('masterPassword'),
+            passwordId: passwordId
+        };
+        axios.post("http://localhost:8080/api/v1/password/show", show)
+            .then(response => {
+
+                    console.log(response.data)
+                    if (response.data != null) {
+                        //console.log(this)
+                        setTimeout(() => this.setState(
+                            {
+                                passwords: this.state.passwords.map(password => {
+
+                                    if (password.id === passwordId) {
+                                        password.password = response.data
+                                    }
+                                    return password
+
+                                })
+                            }), 0);
+                        setTimeout(() => this.setState({
+                                passwords: this.state.passwords.map(password => {
+
+                                    if (password.id === passwordId) {
+                                        password.password = "******"
+                                    }
+                                    return password
+
+                                })
+                            }
+                        ), 3000);
+
+                    } else {
+                        this.setState({"show": false});
+                    }
+                }
+            );
 
     };
 
     changePage = event => {
         let targetPage = parseInt(event.target.value);
-        if(this.state.search) {
+        if (this.state.search) {
             this.searchData(targetPage);
         } else {
             this.findAllPasswords(targetPage);
@@ -134,8 +199,8 @@ class PasswordList extends Component {
 
     firstPage = () => {
         let firstPage = 1;
-        if(this.state.currentPage > firstPage) {
-            if(this.state.search) {
+        if (this.state.currentPage > firstPage) {
+            if (this.state.search) {
                 this.searchData(firstPage);
             } else {
                 this.findAllPasswords(firstPage);
@@ -145,8 +210,8 @@ class PasswordList extends Component {
 
     prevPage = () => {
         let prevPage = 1;
-        if(this.state.currentPage > prevPage) {
-            if(this.state.search) {
+        if (this.state.currentPage > prevPage) {
+            if (this.state.search) {
                 this.searchData(this.state.currentPage - prevPage);
             } else {
                 this.findAllPasswords(this.state.currentPage - prevPage);
@@ -156,8 +221,8 @@ class PasswordList extends Component {
 
     lastPage = () => {
         let condition = Math.ceil(this.state.totalElements / this.state.passwordsPerPage);
-        if(this.state.currentPage < condition) {
-            if(this.state.search) {
+        if (this.state.currentPage < condition) {
+            if (this.state.search) {
                 this.searchData(condition);
             } else {
                 this.findAllPasswords(condition);
@@ -166,8 +231,8 @@ class PasswordList extends Component {
     };
 
     nextPage = () => {
-        if(this.state.currentPage < Math.ceil(this.state.totalElements / this.state.passwordsPerPage)) {
-            if(this.state.search) {
+        if (this.state.currentPage < Math.ceil(this.state.totalElements / this.state.passwordsPerPage)) {
+            if (this.state.search) {
                 this.searchData(this.state.currentPage + 1);
             } else {
                 this.findAllPasswords(this.state.currentPage + 1);
@@ -177,18 +242,18 @@ class PasswordList extends Component {
 
     searchChange = event => {
         this.setState({
-            [event.target.name] : event.target.value
+            [event.target.name]: event.target.value
         });
     };
 
     cancelSearch = () => {
-        this.setState({"search" : ''});
+        this.setState({"search": ''});
         this.findAllPasswords(this.state.currentPage);
     };
 
     searchData = (currentPage) => {
         currentPage -= 1;
-        axios.get("http://localhost:8081/rest/passwords/search/"+this.state.search+"?page="+currentPage+"&size="+this.state.passwordsPerPage)
+        axios.get("http://localhost:8081/rest/passwords/search/" + this.state.search + "?page=" + currentPage + "&size=" + this.state.passwordsPerPage)
             .then(response => response.data)
             .then((data) => {
                 this.setState({
@@ -200,17 +265,37 @@ class PasswordList extends Component {
             });
     };
 
+    openModal() {
+        this.setState({
+            visible: true
+        });
+    }
+
+    closeModal() {
+        this.setState({
+            visible: false
+
+        });
+    }
+
+    changeUserLoginInput = event => {
+        this.setState({
+            sharedLogin: event.target.value
+        });
+    };
+
     render() {
-        const {passwords, currentPage, totalPages, search} = this.state;
+        const {passwords, currentPage, totalPages, search, sharedLogin, share, mode, isAlertModeVisible} = this.state;
 
         return (
             <div>
+
                 <Card className={"border border-dark bg-dark text-white"}>
                     <Card.Header>
-                        <div style={{"float":"left"}}>
-                            <FontAwesomeIcon icon={faList} /> Password List
+                        <div style={{"float": "left"}}>
+                            <FontAwesomeIcon icon={faList}/> Password List
                         </div>
-                        <div style={{"float":"right"}}>
+                        <div style={{"float": "right"}}>
                             <InputGroup size="sm">
                                 <FormControl placeholder="Search" name="search" value={search}
                                              className={"info-border bg-dark text-white"}
@@ -219,8 +304,9 @@ class PasswordList extends Component {
                                     <Button size="sm" variant="outline-info" type="button" onClick={this.searchData}>
                                         <FontAwesomeIcon icon={faSearch}/>
                                     </Button>
-                                    <Button size="sm" variant="outline-danger" type="button" onClick={this.cancelSearch}>
-                                        <FontAwesomeIcon icon={faTimes} />
+                                    <Button size="sm" variant="outline-danger" type="button"
+                                            onClick={this.cancelSearch}>
+                                        <FontAwesomeIcon icon={faTimes}/>
                                     </Button>
                                 </InputGroup.Append>
                             </InputGroup>
@@ -234,6 +320,7 @@ class PasswordList extends Component {
                                 <th>Password</th>
                                 <th>Web-site URL</th>
                                 <th>Description</th>
+                                <th>Is yours</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -246,17 +333,73 @@ class PasswordList extends Component {
                                     passwords.map((password) => (
                                         <tr key={password.id}>
 
-                                            <td>{password.login}</td>
+                                            <td>{password.login} </td>
                                             <td>{password.password}</td>
                                             <td>{password.web_address}</td>
                                             <td>{password.description}</td>
+                                            <td>{password.ownerId != null? 'no' : 'yes' }</td>
+
 
                                             <td>
                                                 <ButtonGroup>
 
-                                                    {/*<Link to={"edit/"+password.id} className="btn btn-sm btn-outline-primary"><FontAwesomeIcon icon={faEdit} /></Link>{' '}*/}
 
-                                                    <Button size="sm" variant="outline-danger" onClick={this.deletePassword.bind(this, password.id)}><FontAwesomeIcon icon={faEye} /></Button>
+                                                    <Button size="sm" variant="outline-primary"
+                                                            onClick={this.openModal.bind(this, password.id)}><FontAwesomeIcon
+                                                        icon={faShare}/></Button>
+
+                                                    <Modal visible={this.state.visible} width="400" height="300"
+                                                           effect="fadeInUp" onClickAway={() => this.closeModal()}>
+                                                        <div style={{padding: '25px'}}>
+                                                        <div style={{"display": share ? "block" : "none"}}>
+                                                            <MyToast
+                                                                children={{show: share, message: "Successfully."}}/>
+                                                        </div>
+                                                        <div>
+                                                            <h1 style={{color: 'black'}}>Share password </h1>
+                                                            <p style={{color: 'black'}}>Type an email address or
+                                                                login</p>
+                                                            <form class="form">
+                                                                <label for="name" class="label-name"
+                                                                       style={{color: 'black',padding: '5px'}}>User login: </label>
+
+                                                                <input type="text" value={sharedLogin} id="name"
+                                                                       name="name" maxlength="40"
+                                                                       class="field field-name"
+                                                                       onChange={this.changeUserLoginInput}/>
+
+                                                            </form>
+
+                                                            <a href="javascript:void(0);"
+                                                               onClick={() => this.sharePassword(password.id)}>Share                     </a>
+                                                            <a href="javascript:void(0);"
+                                                               onClick={() => this.closeModal()}>              Close</a>
+                                                        </div>
+                                                        </div>
+
+                                                    </Modal>
+
+                                                    <Button size="sm" variant="outline-primary"
+                                                            onClick={this.showPassword.bind(this, password.id)}><FontAwesomeIcon
+                                                        icon={faEye}/></Button>
+
+
+                                                    {<Link
+                                                        onClick={(e) => this.editPasswordHandler(e)}
+                                                        to={"edit/" + password.id}
+                                                        className="btn btn-sm btn-outline-danger"><FontAwesomeIcon
+                                                        icon={faEdit}/></Link>}
+
+                                                    <Button size="sm" variant="outline-danger"
+                                                            onClick={this.deletePassword.bind(this, password.id)}><FontAwesomeIcon
+                                                        icon={faTrash}
+                                                    /></Button>
+
+                                                    {<Link
+                                                        onClick={(e) => this.historyPasswordHandler(e)}
+                                                        to={"history/" + password.id}
+                                                        className="btn btn-sm btn-outline-danger"><FontAwesomeIcon
+                                                        icon={faHistory}/></Link>}
 
                                                 </ButtonGroup>
                                             </td>
@@ -268,31 +411,33 @@ class PasswordList extends Component {
                     </Card.Body>
                     {passwords.length > 0 ?
                         <Card.Footer>
-                            <div style={{"float":"left"}}>
+                            <div style={{"float": "left"}}>
                                 Showing Page {currentPage} of {totalPages}
                             </div>
-                            <div style={{"float":"right"}}>
+                            <div style={{"float": "right"}}>
                                 <InputGroup size="sm">
                                     <InputGroup.Prepend>
                                         <Button type="button" variant="outline-info" disabled={currentPage === 1}
                                                 onClick={this.firstPage}>
-                                            <FontAwesomeIcon icon={faFastBackward} /> First
+                                            <FontAwesomeIcon icon={faFastBackward}/> First
                                         </Button>
                                         <Button type="button" variant="outline-info" disabled={currentPage === 1}
                                                 onClick={this.prevPage}>
-                                            <FontAwesomeIcon icon={faStepBackward} /> Prev
+                                            <FontAwesomeIcon icon={faStepBackward}/> Prev
                                         </Button>
                                     </InputGroup.Prepend>
                                     <FormControl className={"page-num bg-dark"} name="currentPage" value={currentPage}
                                                  onChange={this.changePage}/>
                                     <InputGroup.Append>
-                                        <Button type="button" variant="outline-info" disabled={currentPage === totalPages}
+                                        <Button type="button" variant="outline-info"
+                                                disabled={currentPage === totalPages}
                                                 onClick={this.nextPage}>
-                                            <FontAwesomeIcon icon={faStepForward} /> Next
+                                            <FontAwesomeIcon icon={faStepForward}/> Next
                                         </Button>
-                                        <Button type="button" variant="outline-info" disabled={currentPage === totalPages}
+                                        <Button type="button" variant="outline-info"
+                                                disabled={currentPage === totalPages}
                                                 onClick={this.lastPage}>
-                                            <FontAwesomeIcon icon={faFastForward} /> Last
+                                            <FontAwesomeIcon icon={faFastForward}/> Last
                                         </Button>
                                     </InputGroup.Append>
                                 </InputGroup>
@@ -313,7 +458,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        deletePassword: (passwordId) => dispatch(deletePassword(passwordId))
+        showPassword: (passwordId) => dispatch(showPassword(passwordId))
     };
 };
 

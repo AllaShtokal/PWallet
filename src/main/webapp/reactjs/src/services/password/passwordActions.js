@@ -29,7 +29,7 @@ const fetchpasswordRequest = () => {
 export const fetchpassword = passwordId => {
     return dispatch => {
         dispatch(fetchpasswordRequest());
-        axios.get("http://localhost:8081/rest/passwords/"+passwordId)
+        axios.get("http://localhost:8080/api/v1/password/id?id="+passwordId+"&login="+localStorage.getItem("login"))
             .then(response => {
                 dispatch(passwordSuccess(response.data));
             })
@@ -48,9 +48,12 @@ const updatepasswordRequest = () => {
 export const updatepassword = password => {
     return dispatch => {
         dispatch(updatepasswordRequest());
-        axios.put("http://localhost:8081/rest/passwords", password)
+        axios.put("http://localhost:8080/api/v1/password/edit", password)
             .then(response => {
-                dispatch(passwordSuccess(response.data));
+              if(response.data)
+                dispatch(passwordSuccess(response.data))
+              else
+                alert("You can not edit shared with you password!")
             })
             .catch(error => {
                 dispatch(passwordFailure(error));
@@ -64,7 +67,7 @@ const deletepasswordRequest = () => {
     };
 };
 
-export const deletePassword = passwordId => {
+export const showPassword = passwordId => {
     return dispatch => {
         dispatch(deletepasswordRequest());
     };

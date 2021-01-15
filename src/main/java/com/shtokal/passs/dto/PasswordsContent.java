@@ -12,4 +12,6 @@ public class PasswordsContent {
     private String password;
     private String web_address;
     private String description;
+    private String ownerId;
+
 }

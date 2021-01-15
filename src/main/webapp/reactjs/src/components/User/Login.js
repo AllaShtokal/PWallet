@@ -13,7 +13,7 @@ class Login extends Component {
     }
 
     initialState = {
-        login: '', password: '', error: '', lastSuccess: '', lastUnsuccessful: ''
+        login: '', password: '', error: '', lastSuccess: '', lastUnsuccessful: '', mode: 'read'
     };
 
     credentialChange = event => {
@@ -23,11 +23,9 @@ class Login extends Component {
     };
 
     validateUser = () => {
-        this.props.authenticateUser(this.state.login, this.state.password);
+        this.props.authenticateUser(this.state.login, this.state.password, this.state.mode);
         setTimeout(() => {
-            console.log(this.props.auth.isLoggedIn)
-            console.log(this.props.auth.lastSuccess)
-            console.log(this.props.auth.lastUnsuccessful)
+
             if (this.props.auth.isLoggedIn === "0") {
                 return this.props.history.push("/");
             } else {
@@ -53,10 +51,15 @@ class Login extends Component {
         this.setState(() => this.initialState);
     };
 
-    render() {
-        console.log("render")
+    userChange = event => {
+        this.setState({
+            mode: event.target.value
+        });
+    };
 
-        const {login, password, error,lastSuccess, lastUnsuccessful } = this.state;
+    render() {
+
+        const {login, password, error,lastSuccess, lastUnsuccessful, mode } = this.state;
         console.log(this.state)
         return (
             <Row className="justify-content-md-center">
@@ -89,6 +92,20 @@ class Login extends Component {
                                                      value={password} onChange={this.credentialChange}
                                                      className={"bg-dark text-white"} placeholder="Enter Password"/>
                                     </InputGroup>
+                                </Form.Group>
+                            </Form.Row>
+                            <Form.Row>
+                                <Form.Group as={Col}>
+                                    <Form.Label>Choose a method to store your password</Form.Label>
+                                    <Form.Control as="select"
+                                                  className={"bg-dark text-white"}
+                                                  onChange={this.userChange}
+                                                  name={"mode"}
+                                                  value={mode}
+                                    >
+                                        <option value={"read"}>Read Only</option>
+                                        <option value={"write"}>Modify Mode</option>
+                                    </Form.Control>
                                 </Form.Group>
                             </Form.Row>
                         </Card.Body>
@@ -125,7 +142,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        authenticateUser: (login, password) => dispatch(authenticateUser(login, password))
+        authenticateUser: (login, password, mode) => dispatch(authenticateUser(login, password, mode))
     };
 };
 

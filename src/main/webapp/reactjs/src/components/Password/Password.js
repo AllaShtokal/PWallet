@@ -24,7 +24,7 @@ class Password extends Component {
     }
 
     initialState = {
-        id:'', login:'', password:'', web_address:'', description:''
+        id:'', login:'', password:'', web_address:'', description:'', ownerId: ''
     };
 
     componentDidMount() {
@@ -32,58 +32,13 @@ class Password extends Component {
         if(passwordId) {
             this.findpasswordById(passwordId);
         }
-       // this.findAllLanguages();
-       // this.findAllGenres();
+
     }
 
-    // findAllLanguages = () => {
-    //     axios.get("http://localhost:8081/rest/passwords/languages")
-    //         .then(response => response.data)
-    //         .then((data) => {
-    //             this.setState({
-    //                 languages: [{value:'', display:'Select Language'}]
-    //                     .concat(data.map(language => {
-    //                         return {value:language, display:language}
-    //                     }))
-    //             });
-    //         });
-    // };
 
-    // findAllGenres = () => {
-    //     axios.get("http://localhost:8081/rest/passwords/genres")
-    //         .then(response => response.data)
-    //         .then((data) => {
-    //             this.setState({
-    //                 genres: [{value:'', display:'Select Genre'}]
-    //                     .concat(data.map(genre => {
-    //                         return {value:genre, display:genre}
-    //                     }))
-    //             });
-    //         });
-    // };
-
-    /*findpasswordById = (passwordId) => {
-        fetch("http://localhost:8081/rest/passwords/"+passwordId)
-            .then(response => response.json())
-            .then((password) => {
-                if(password) {
-                    this.setState({
-                        id: password.id,
-                        title: password.title,
-                        author: password.author,
-                        coverPhotoURL: password.coverPhotoURL,
-                        isbnNumber: password.isbnNumber,
-                        price: password.price,
-                        language: password.language,
-                        genre: password.genre
-                    });
-                }
-            }).catch((error) => {
-                console.error("Error - "+error);
-            });
-    };*/
 
     findpasswordById = (passwordId) => {
+        console.log(this.state);
         this.props.fetchpassword(passwordId);
         setTimeout(() => {
             let password = this.props.passwordObject.password;
@@ -97,61 +52,13 @@ class Password extends Component {
                 });
             }
         }, 1000);
-        /*axios.get("http://localhost:8081/rest/passwords/"+passwordId)
-            .then(response => {
-                if(response.data != null) {
-                    this.setState({
-                        id: response.data.id,
-                        title: response.data.title,
-                        author: response.data.author,
-                        coverPhotoURL: response.data.coverPhotoURL,
-                        isbnNumber: response.data.isbnNumber,
-                        price: response.data.price,
-                        language: response.data.language,
-                        genre: response.data.genre
-                    });
-                }
-            }).catch((error) => {
-                console.error("Error - "+error);
-            });*/
+
     };
 
     resetpassword = () => {
         this.setState(() => this.initialState);
     };
 
-    /*submitpassword = event => {
-        event.preventDefault();
-
-        const password = {
-            title: this.state.title,
-            author: this.state.author,
-            coverPhotoURL: this.state.coverPhotoURL,
-            isbnNumber: this.state.isbnNumber,
-            price: this.state.price,
-            language: this.state.language,
-            genre: this.state.genre
-        };
-
-        const headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-
-        fetch("http://localhost:8081/rest/passwords", {
-            method: 'POST',
-            body: JSON.stringify(password),
-            headers
-        })
-        .then(response => response.json())
-        .then((password) => {
-            if(password) {
-                this.setState({"show":true, "method":"post"});
-                setTimeout(() => this.setState({"show":false}), 3000);
-            } else {
-                this.setState({"show":false});
-            }
-        });
-        this.setState(this.initialState);
-    };*/
 
     submitpassword = event => {
         event.preventDefault();
@@ -197,70 +104,32 @@ class Password extends Component {
         this.setState(this.initialState);
     };
 
-    /*updatepassword = event => {
-        event.preventDefault();
 
-        const password = {
-            id: this.state.id,
-            title: this.state.title,
-            author: this.state.author,
-            coverPhotoURL: this.state.coverPhotoURL,
-            isbnNumber: this.state.isbnNumber,
-            price: this.state.price,
-            language: this.state.language,
-            genre: this.state.genre
-        };
-
-        const headers = new Headers();
-        headers.append('Content-Type', 'application/json');
-
-        fetch("http://localhost:8081/rest/passwords", {
-            method: 'PUT',
-            body: JSON.stringify(password),
-            headers
-        })
-        .then(response => response.json())
-        .then((password) => {
-            if(password) {
-                this.setState({"show":true, "method":"put"});
-                setTimeout(() => this.setState({"show":false}), 3000);
-                setTimeout(() => this.passwordList(), 3000);
-            } else {
-                this.setState({"show":false});
-            }
-        });
-        this.setState(this.initialState);
-    };*/
 
     updatepassword = event => {
         event.preventDefault();
 
         const password = {
-            id: this.state.id,
-            login: this.state.login,
-            password: this.state.password,
-            web_address: this.state.web_address,
-            description: this.state.description
+            userLogin: localStorage.getItem('login'),
+            passwordId: this.state.id,
+            newLogin: this.state.login,
+            newPassword: this.state.password,
+            newWeb: this.state.web_address,
+            newDescription: this.state.description
         };
-        this.props.updatepassword(password);
-        setTimeout(() => {
-            if(this.props.updatedpasswordObject.password != null) {
-                this.setState({"show":true, "method":"put"});
-                setTimeout(() => this.setState({"show":false}), 3000);
-            } else {
-                this.setState({"show":false});
-            }
-        }, 2000);
-        /*axios.put("http://localhost:8081/rest/passwords", password)
+
+        axios.put("http://localhost:8080/api/v1/password/edit", password)
             .then(response => {
-                if(response.data != null) {
+                if(response.data){
                     this.setState({"show":true, "method":"put"});
-                    setTimeout(() => this.setState({"show":false}), 3000);
-                    setTimeout(() => this.passwordList(), 3000);
-                } else {
-                    this.setState({"show":false});
+                    setTimeout(() => this.setState({"show":false}), 2000);
                 }
-            });*/
+                else
+                    alert("You have to be an owner to edit/delete shared with you passwords")
+            })
+            .catch(error => {
+
+            });
         this.setState(this.initialState);
     };
 

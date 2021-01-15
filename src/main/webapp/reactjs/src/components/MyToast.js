@@ -11,18 +11,22 @@ export default class MyToast extends Component {
             color: '#4CAF50',
             boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'
         };
-
+        const { type,message  } = this.props;
+        console.log(message)
         return (
+
             <div style={this.props.show ? toastCss : null}>
                 <Toast
-                    className={`border text-white ${this.props.type === "success" ? "border-success bg-success" : "border-success bg-success"}`}
+                    className={`border text-white ${type === "success" ? "border-success bg-success" : "border-success bg-success"}`}
                     show={this.props.show}>
-                    <Toast.Header className={`text-white ${this.props.type === "success" ? "bg-success" : "bg-success"}`}
+                    <Toast.Header className={`text-white ${type === "success" ? "bg-success" : "bg-success"}`}
                                   closeButton={false}>
-                        <strong className="mr-auto">Success</strong>
+                        <strong className="mr-auto">{message?message:"Success"}</strong>
                     </Toast.Header>
                     <Toast.Body>
-                        {this.props.message}
+                        <div>
+                        {message}
+                        </div>
                     </Toast.Body>
                 </Toast>
             </div>

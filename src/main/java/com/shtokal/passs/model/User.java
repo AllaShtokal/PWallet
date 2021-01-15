@@ -41,10 +41,30 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Password> passwords = new HashSet<>();
 
+    @OneToMany(mappedBy = "user")
+    private Set<DataChange> dataChanges = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<FunctionRun> functionRuns = new HashSet<>();
+
     public void addPassword(Password password) {
         this.passwords.add(password);
         password.setUser(this);
     }
+
+    public void addDataChange(DataChange dataChange) {
+        this.dataChanges.add(dataChange);
+        dataChange.setUser(this);
+    }
+
+    public void addFunctionRun(FunctionRun functionRun) {
+        this.functionRuns.add(functionRun);
+        functionRun.setUser(this);
+    }
+
+
+
+
 
 
 }

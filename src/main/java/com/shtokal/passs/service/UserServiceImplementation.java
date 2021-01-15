@@ -7,15 +7,14 @@ import com.shtokal.passs.dto.UserDTO;
 import com.shtokal.passs.dto.UserDTORegister;
 import com.shtokal.passs.dto.UserResponse;
 import com.shtokal.passs.exceptions.LoginExistsException;
-import com.shtokal.passs.model.ERole;
-import com.shtokal.passs.model.Log;
-import com.shtokal.passs.model.Role;
-import com.shtokal.passs.model.User;
+import com.shtokal.passs.model.*;
+import com.shtokal.passs.repository.FunctionRunRepository;
 import com.shtokal.passs.repository.RoleRepository;
 import com.shtokal.passs.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,14 +30,16 @@ public class UserServiceImplementation implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordService passwordService;
     private final LogService logService;
+    private final FunctionRunRepository functionRunRepository;
 
     public UserServiceImplementation(UserRepository userRepository,
                                      RoleRepository roleRepository,
-                                     PasswordService passwordService, LogService logService) {
+                                     PasswordService passwordService, LogService logService, FunctionRunRepository functionRunRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordService = passwordService;
         this.logService = logService;
+        this.functionRunRepository = functionRunRepository;
     }
 
 
@@ -46,6 +47,13 @@ public class UserServiceImplementation implements UserService {
     public Boolean login(UserDTO userDTO) {
         try {
             User user = userRepository.findByLogin(userDTO.getLogin());
+
+            //FunctionRun
+            FunctionRun functionRun = new FunctionRun();
+            functionRun.setFunctionName("login");
+            functionRun.setTime(LocalDateTime.now());
+            user.addFunctionRun(functionRun);
+            functionRunRepository.save(functionRun);
 
             return checkIfPasswordsMatch(user.getIsPasswordKeptAsHash(),
                     user.getSalt(),
@@ -99,6 +107,7 @@ public class UserServiceImplementation implements UserService {
     public Boolean changePassword(ChangeUserPasswordRequest userRequest) throws Exception {
 
         User user = userRepository.findByLogin(userRequest.getLogin());
+        String oldPasswordHash = user.getPassword_hash();
         if (checkIfPasswordsMatch(user.getIsPasswordKeptAsHash(),
                 user.getSalt(),
                 userRequest.getOldPassword(),
@@ -112,7 +121,8 @@ public class UserServiceImplementation implements UserService {
             user.setPassword_hash(newPasswordHash);
             //recrypt all user's passwords here
             return passwordService.changeAllUsersPasswords(userRequest.getLogin(),
-                    userRequest.getOldPassword(), userRequest.getNewPassword());
+                   // userRequest.getOldPassword(), userRequest.getNewPassword());
+                    oldPasswordHash, newPasswordHash);
         } else return false;
 
     }

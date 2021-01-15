@@ -1,11 +1,12 @@
 import {LOGIN_REQUEST, LOGOUT_REQUEST, SUCCESS, FAILURE} from './authTypes';
 import axios from "axios";
 
-export const authenticateUser = (login, password) => {
+export const authenticateUser = (login, password, mode) => {
     return dispatch => {
         dispatch(loginRequest());
         localStorage.setItem('masterPassword', password);
         localStorage.setItem('login', login);
+        localStorage.setItem('mode', mode);
         const user = {
             login: login,
             password: password
