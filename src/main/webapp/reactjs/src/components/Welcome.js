@@ -4,7 +4,7 @@ import {Jumbotron} from 'react-bootstrap';
 
 export default function Welcome(props) {
     return (
-        <Jumbotron className="bg-dark text-white">
+        <Jumbotron className="bg-light text-black">
             <h1>{props.heading}</h1>
             <blockquote className="blockquote mb-0">
                 <p>

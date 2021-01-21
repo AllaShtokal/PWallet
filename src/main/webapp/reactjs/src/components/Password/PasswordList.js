@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import Modal from 'react-awesome-modal';
 import {connect} from 'react-redux';
 import {showPassword} from '../../services/index';
-
 import './../../assets/css/Style.css';
 import {Card, Table, Image, ButtonGroup, Button, InputGroup, FormControl} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
@@ -54,10 +53,9 @@ class PasswordList extends Component {
         this.findAllPasswords(this.state.currentPage);
     }
 
-
     findAllPasswords(currentPage) {
-
         currentPage -= 1;
+
         axios.get("http://localhost:8080/api/v1/password/allbylogin?login=" + localStorage.getItem('login') + "&pageNumber=" + currentPage + "&pageSize=" + this.state.passwordsPerPage + "&sortBy=price&sortDir=" + this.state.sortDir)
             .then(response => response.data)
             .then((data) => {
@@ -75,7 +73,6 @@ class PasswordList extends Component {
 
     deletePassword = (passwordId) => {
         if (this.state.mode === 'write') {
-
 
             axios.put("http://localhost:8080/api/v1/password/delete?passwordId=" + passwordId + "&userLogin=" + localStorage.getItem('login'))
                 .then((response) => {
@@ -253,7 +250,8 @@ class PasswordList extends Component {
 
     searchData = (currentPage) => {
         currentPage -= 1;
-        axios.get("http://localhost:8081/rest/passwords/search/" + this.state.search + "?page=" + currentPage + "&size=" + this.state.passwordsPerPage)
+        axios.get("http://localhost:8081/rest/passwords/search/" + this.state.search + "?page=" + currentPage + "&size="
+            + this.state.passwordsPerPage)
             .then(response => response.data)
             .then((data) => {
                 this.setState({
@@ -290,38 +288,23 @@ class PasswordList extends Component {
         return (
             <div>
 
-                <Card className={"border border-dark bg-dark text-white"}>
+                <Card className={"border border-light bg-light text-black"}>
                     <Card.Header>
                         <div style={{"float": "left"}}>
                             <FontAwesomeIcon icon={faList}/> Password List
                         </div>
-                        <div style={{"float": "right"}}>
-                            <InputGroup size="sm">
-                                <FormControl placeholder="Search" name="search" value={search}
-                                             className={"info-border bg-dark text-white"}
-                                             onChange={this.searchChange}/>
-                                <InputGroup.Append>
-                                    <Button size="sm" variant="outline-info" type="button" onClick={this.searchData}>
-                                        <FontAwesomeIcon icon={faSearch}/>
-                                    </Button>
-                                    <Button size="sm" variant="outline-danger" type="button"
-                                            onClick={this.cancelSearch}>
-                                        <FontAwesomeIcon icon={faTimes}/>
-                                    </Button>
-                                </InputGroup.Append>
-                            </InputGroup>
-                        </div>
+
                     </Card.Header>
                     <Card.Body>
-                        <Table bordered hover striped variant="dark">
+                        <Table bordered hover striped variant="light">
                             <thead>
                             <tr>
                                 <th>Login</th>
                                 <th>Password</th>
-                                <th>Web-site URL</th>
+                                <th>URL</th>
                                 <th>Description</th>
-                                <th>Is yours</th>
-                                <th>Actions</th>
+                                <th>Is owner</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -346,7 +329,7 @@ class PasswordList extends Component {
 
                                                     <Button size="sm" variant="outline-primary"
                                                             onClick={this.openModal.bind(this, password.id)}><FontAwesomeIcon
-                                                        icon={faShare}/></Button>
+                                                      />Share</Button>
 
                                                     <Modal visible={this.state.visible} width="400" height="300"
                                                            effect="fadeInUp" onClickAway={() => this.closeModal()}>
@@ -381,25 +364,24 @@ class PasswordList extends Component {
 
                                                     <Button size="sm" variant="outline-primary"
                                                             onClick={this.showPassword.bind(this, password.id)}><FontAwesomeIcon
-                                                        icon={faEye}/></Button>
+                                                      />Show</Button>
 
 
                                                     {<Link
                                                         onClick={(e) => this.editPasswordHandler(e)}
                                                         to={"edit/" + password.id}
-                                                        className="btn btn-sm btn-outline-danger"><FontAwesomeIcon
-                                                        icon={faEdit}/></Link>}
+                                                        className="btn btn-sm btn-outline-danger">Edit</Link>}
 
                                                     <Button size="sm" variant="outline-danger"
                                                             onClick={this.deletePassword.bind(this, password.id)}><FontAwesomeIcon
-                                                        icon={faTrash}
-                                                    /></Button>
+
+                                                    />Delete</Button>
 
                                                     {<Link
                                                         onClick={(e) => this.historyPasswordHandler(e)}
                                                         to={"history/" + password.id}
                                                         className="btn btn-sm btn-outline-danger"><FontAwesomeIcon
-                                                        icon={faHistory}/></Link>}
+                                                      />History</Link>}
 
                                                 </ButtonGroup>
                                             </td>
@@ -412,36 +394,9 @@ class PasswordList extends Component {
                     {passwords.length > 0 ?
                         <Card.Footer>
                             <div style={{"float": "left"}}>
-                                Showing Page {currentPage} of {totalPages}
+
                             </div>
-                            <div style={{"float": "right"}}>
-                                <InputGroup size="sm">
-                                    <InputGroup.Prepend>
-                                        <Button type="button" variant="outline-info" disabled={currentPage === 1}
-                                                onClick={this.firstPage}>
-                                            <FontAwesomeIcon icon={faFastBackward}/> First
-                                        </Button>
-                                        <Button type="button" variant="outline-info" disabled={currentPage === 1}
-                                                onClick={this.prevPage}>
-                                            <FontAwesomeIcon icon={faStepBackward}/> Prev
-                                        </Button>
-                                    </InputGroup.Prepend>
-                                    <FormControl className={"page-num bg-dark"} name="currentPage" value={currentPage}
-                                                 onChange={this.changePage}/>
-                                    <InputGroup.Append>
-                                        <Button type="button" variant="outline-info"
-                                                disabled={currentPage === totalPages}
-                                                onClick={this.nextPage}>
-                                            <FontAwesomeIcon icon={faStepForward}/> Next
-                                        </Button>
-                                        <Button type="button" variant="outline-info"
-                                                disabled={currentPage === totalPages}
-                                                onClick={this.lastPage}>
-                                            <FontAwesomeIcon icon={faFastForward}/> Last
-                                        </Button>
-                                    </InputGroup.Append>
-                                </InputGroup>
-                            </div>
+
                         </Card.Footer> : null
                     }
                 </Card>

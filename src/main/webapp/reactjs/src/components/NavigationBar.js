@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Navbar, Nav} from 'react-bootstrap';
+import {Navbar, Nav, Card} from 'react-bootstrap';
 import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faUserPlus, faSignInAlt, faSignOutAlt, faEquals} from '@fortawesome/free-solid-svg-icons';
@@ -16,8 +16,8 @@ class NavigationBar extends Component {
             <>
                 <div className="mr-auto"/>
                 <Nav className="navbar-right">
-                    <Link to={"register"} className="nav-link"><FontAwesomeIcon icon={faUserPlus} /> Register</Link>
-                    <Link to={"login"} className="nav-link"><FontAwesomeIcon icon={faSignInAlt} /> Login</Link>
+                    <Link to={"register"} className="nav-link">Register</Link>
+                    <Link to={"login"} className="nav-link"> Login</Link>
                 </Nav>
             </>
         );
@@ -30,15 +30,17 @@ class NavigationBar extends Component {
                     <Link to={"/change"} className="nav-link">Change Master Password</Link>
                 </Nav>
                 <Nav className="navbar-right">
-                    <Link className="nav-link" ><FontAwesomeIcon  /> Current mode: {localStorage.getItem("mode")}</Link>
+                    <Link className="nav-link" ><FontAwesomeIcon  />  mode: {localStorage.getItem("mode")}</Link>
                     <Link to={"logout"} className="nav-link" onClick={this.logout}><FontAwesomeIcon icon={faSignOutAlt} /> Logout</Link>
                 </Nav>
             </>
         );
-        return (
-            <Navbar bg="dark" variant="dark">
+
+        return(
+            <Navbar  bg="light" variant="light">
                 <Link to={""} className="navbar-brand">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Book_icon_1.png" width="25" height="25" alt="brand"/> Password Wallet
+
+                    PW app
                 </Link>
                 {this.props.auth.isLoggedIn === "0" ? userLinks : guestLinks}
             </Navbar>

@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-
 import {connect} from 'react-redux';
 import {savePassword, fetchpassword, updatepassword} from '../../services/index';
-
 import {Card, Form, Button, Col, InputGroup, Image} from 'react-bootstrap';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faSave, faPlusSquare, faUndo, faList, faEdit} from '@fortawesome/free-solid-svg-icons';
@@ -32,11 +30,7 @@ class Password extends Component {
         if(passwordId) {
             this.findpasswordById(passwordId);
         }
-
     }
-
-
-
     findpasswordById = (passwordId) => {
         console.log(this.state);
         this.props.fetchpassword(passwordId);
@@ -151,9 +145,9 @@ class Password extends Component {
                 <div style={{"display":this.state.show ? "block" : "none"}}>
                     <MyToast show = {this.state.show} message = {this.state.method === "put" ? "Password Updated Successfully." : "Password Saved Successfully."} type = {"success"}/>
                 </div>
-                <Card className={"border border-dark bg-dark text-white"}>
+                <Card className={"border border-light bg-light text-black"}>
                     <Card.Header>
-                        <FontAwesomeIcon icon={this.state.id ? faEdit : faPlusSquare} /> {this.state.id ? "Update Password" : "Add New Password"}
+                      {this.state.id ? "Update Password" : "Add New Password"}
                     </Card.Header>
                     <Form onReset={this.resetpassword} onSubmit={this.state.id ? this.updatepassword : this.submitpassword} id="passwordFormId">
                         <Card.Body>
@@ -163,7 +157,7 @@ class Password extends Component {
                                     <Form.Control required autoComplete="off"
                                         type="text" name="login"
                                         value={login} onChange={this.passwordChange}
-                                        className={"bg-dark text-white"}
+                                        className={"bg-light text-black"}
                                         placeholder="Enter Login" />
                                 </Form.Group>
                                 <Form.Group as={Col} controlId="formGridAuthor">
@@ -171,7 +165,7 @@ class Password extends Component {
                                     <Form.Control required autoComplete="off"
                                         type="password" name="password"
                                         value={password} onChange={this.passwordChange}
-                                        className={"bg-dark text-white"}
+                                        className={"bg-light text-black"}
                                         placeholder="Enter Password " />
                                 </Form.Group>
                             </Form.Row>
@@ -182,7 +176,7 @@ class Password extends Component {
                                         <Form.Control required autoComplete="off"
                                             type="text" name="web_address"
                                             value={web_address} onChange={this.passwordChange}
-                                            className={"bg-dark text-white"}
+                                            className={"bg-light text-black"}
                                             placeholder="Enter Web-site URL" />
                                     </InputGroup>
                                 </Form.Group>
@@ -191,7 +185,7 @@ class Password extends Component {
                                     <Form.Control required autoComplete="off"
                                         type="text" name="description"
                                         value={description} onChange={this.passwordChange}
-                                        className={"bg-dark text-white"}
+                                        className={"bg-light text-black"}
                                         placeholder="Enter description" />
                                 </Form.Group>
                             </Form.Row>
@@ -199,13 +193,13 @@ class Password extends Component {
                         </Card.Body>
                         <Card.Footer style={{"textAlign":"right"}}>
                             <Button size="sm" variant="success" type="submit">
-                                <FontAwesomeIcon icon={faSave} /> {this.state.id ? "Update" : "Save"}
+                               {this.state.id ? "Update" : "Save"}
                             </Button>{' '}
                             <Button size="sm" variant="info" type="reset">
-                                <FontAwesomeIcon icon={faUndo} /> Reset
+                               Reset
                             </Button>{' '}
                             <Button size="sm" variant="info" type="button" onClick={this.passwordList.bind()}>
-                                <FontAwesomeIcon icon={faList} /> Password List
+                                Password List
                             </Button>
                         </Card.Footer>
                     </Form>

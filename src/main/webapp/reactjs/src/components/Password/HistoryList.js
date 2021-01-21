@@ -102,30 +102,15 @@ class HistoryList extends Component {
         return (
             <div>
 
-                <Card className={"border border-dark bg-dark text-white"}>
+                <Card className={"border border-light bg-light text-black"}>
                     <Card.Header>
                         <div style={{"float": "left"}}>
-                            <FontAwesomeIcon icon={faList}/> Function runs by User  {localStorage.getItem("login")}
+                           Function runs by User  {localStorage.getItem("login")}
                         </div>
-                        <div style={{"float": "right"}}>
-                            <InputGroup size="sm">
-                                <FormControl placeholder="Search" name="search" value={search}
-                                             className={"info-border bg-dark text-white"}
-                                             onChange={this.searchChange}/>
-                                <InputGroup.Append>
-                                    <Button size="sm" variant="outline-info" type="button" onClick={this.searchData}>
-                                        <FontAwesomeIcon icon={faSearch}/>
-                                    </Button>
-                                    <Button size="sm" variant="outline-danger" type="button"
-                                            onClick={this.cancelSearch}>
-                                        <FontAwesomeIcon icon={faTimes}/>
-                                    </Button>
-                                </InputGroup.Append>
-                            </InputGroup>
-                        </div>
+
                     </Card.Header>
                     <Card.Body>
-                        <Table bordered hover striped variant="dark">
+                        <Table bordered hover striped variant="light">
                             <thead>
                             <tr>
                                 <th>ID</th>
@@ -153,9 +138,7 @@ class HistoryList extends Component {
                                                 <ButtonGroup>
                                                     <Button size="sm" variant="outline-primary"
                                                             onClick={this.restoreHistory.bind(this, action.id)}
-                                                            ><FontAwesomeIcon
-                                                        icon={faFighterJet}
-                                                    /></Button>
+                                                            >Roll back</Button>
                                                 </ButtonGroup>
                                             </td>
 
@@ -170,34 +153,7 @@ class HistoryList extends Component {
                             <div style={{"float": "left"}}>
                                 Showing Page {currentPage} of {totalPages}
                             </div>
-                            <div style={{"float": "right"}}>
-                                <InputGroup size="sm">
-                                    <InputGroup.Prepend>
-                                        <Button type="button" variant="outline-info" disabled={currentPage === 1}
-                                                onClick={this.firstPage}>
-                                            <FontAwesomeIcon icon={faFastBackward}/> First
-                                        </Button>
-                                        <Button type="button" variant="outline-info" disabled={currentPage === 1}
-                                                onClick={this.prevPage}>
-                                            <FontAwesomeIcon icon={faStepBackward}/> Prev
-                                        </Button>
-                                    </InputGroup.Prepend>
-                                    <FormControl className={"page-num bg-dark"} name="currentPage" value={currentPage}
-                                                 onChange={this.changePage}/>
-                                    <InputGroup.Append>
-                                        <Button type="button" variant="outline-info"
-                                                disabled={currentPage === totalPages}
-                                                onClick={this.nextPage}>
-                                            <FontAwesomeIcon icon={faStepForward}/> Next
-                                        </Button>
-                                        <Button type="button" variant="outline-info"
-                                                disabled={currentPage === totalPages}
-                                                onClick={this.lastPage}>
-                                            <FontAwesomeIcon icon={faFastForward}/> Last
-                                        </Button>
-                                    </InputGroup.Append>
-                                </InputGroup>
-                            </div>
+
                         </Card.Footer> : null
                     }
                 </Card>

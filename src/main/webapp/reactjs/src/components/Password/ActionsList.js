@@ -109,7 +109,7 @@ class ActionsList extends Component {
         return (
             <div>
 
-                <Card className={"border border-dark bg-dark text-white"}>
+                <Card className={"border border-light bg-light text-black"}>
                     <Card.Header>
                         <div style={{"float": "left"}}>
                             <FontAwesomeIcon icon={faList}/> Function runs by User  {localStorage.getItem("login")}
@@ -117,7 +117,7 @@ class ActionsList extends Component {
                         <div style={{"float": "right"}}>
                             <InputGroup size="sm">
                                 <FormControl placeholder="Search" name="search" value={search}
-                                             className={"info-border bg-dark text-white"}
+                                             className={"info-border bg-light text-black"}
                                              onChange={this.searchChange}/>
                                 <InputGroup.Append>
                                     <Button size="sm" variant="outline-info" type="button" onClick={this.searchData}>
@@ -135,7 +135,7 @@ class ActionsList extends Component {
                             <Form.Group as={Col}>
                                 <Form.Label> </Form.Label>
                                 <Form.Control as="select"
-                                              className={"bg-dark text-white"}
+                                              className={"bg-light text-black"}
                                               onChange={this.userChange}
                                               name={"chosenAction"}
                                               value={chosenAction}                                >
@@ -152,7 +152,7 @@ class ActionsList extends Component {
                         </Form>
                     </Card.Header>
                     <Card.Body>
-                        <Table bordered hover striped variant="dark">
+                        <Table bordered hover striped variant="light">
                             <thead>
                             <tr>
                                 <th>ID</th>
@@ -203,7 +203,7 @@ class ActionsList extends Component {
                                             <FontAwesomeIcon icon={faStepBackward}/> Prev
                                         </Button>
                                     </InputGroup.Prepend>
-                                    <FormControl className={"page-num bg-dark"} name="currentPage" value={currentPage}
+                                    <FormControl className={"page-num bg-light"} name="currentPage" value={currentPage}
                                                  onChange={this.changePage}/>
                                     <InputGroup.Append>
                                         <Button type="button" variant="outline-info"

@@ -18,9 +18,9 @@ import HistoryList from "./components/Password/HistoryList";
 
 export default function App() {
 
-  const heading = "Welcome to Passs Wallet";
-  const quote = "A simple web application to securely manage passwords.";
-  const footer = "Alla Shtokal";
+  const heading = "BSI: Serhii Shtokal IMST 2.1.6";
+  const quote = "";
+  const footer = "";
 
   return (
     <Router>

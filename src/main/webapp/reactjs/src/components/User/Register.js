@@ -58,20 +58,20 @@ export default class Register extends Component {
                 </div>
                 <Row className="justify-content-md-center">
                     <Col xs={5}>
-                        <Card className={"border border-dark bg-dark text-white"}>
+                        <Card className={"border border-light bg-light text-black"}>
                             <Card.Header>
-                                <FontAwesomeIcon icon={faUserPlus}/> Register
+                               Register
                             </Card.Header>
                             <Card.Body>
                                 <Form.Row>
                                     <Form.Group as={Col}>
                                         <InputGroup>
                                             <InputGroup.Prepend>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faEnvelope}/></InputGroup.Text>
+                                                <InputGroup.Text></InputGroup.Text>
                                             </InputGroup.Prepend>
                                             <FormControl required autoComplete="off" type="text" name="login"
                                                          value={login} onChange={this.userChange}
-                                                         className={"bg-dark text-white"} placeholder="Enter Login"/>
+                                                         className={"bg-light text-black"} placeholder="Enter Login"/>
                                         </InputGroup>
                                     </Form.Group>
                                 </Form.Row>
@@ -79,11 +79,11 @@ export default class Register extends Component {
                                     <Form.Group as={Col}>
                                         <InputGroup>
                                             <InputGroup.Prepend>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faLock}/></InputGroup.Text>
+                                                <InputGroup.Text></InputGroup.Text>
                                             </InputGroup.Prepend>
                                             <FormControl required autoComplete="off" type="password" name="password"
                                                          value={password} onChange={this.userChange}
-                                                         className={"bg-dark text-white"} placeholder="Enter Password"/>
+                                                         className={"bg-light text-black"} placeholder="Enter Password"/>
                                         </InputGroup>
                                     </Form.Group>
                                 </Form.Row>
@@ -91,20 +91,20 @@ export default class Register extends Component {
                                     <Form.Group as={Col}>
                                         <InputGroup>
                                             <InputGroup.Prepend>
-                                                <InputGroup.Text><FontAwesomeIcon icon={faLock}/></InputGroup.Text>
+                                                <InputGroup.Text></InputGroup.Text>
                                             </InputGroup.Prepend>
                                             <FormControl required autoComplete="off" type="password" name="password2"
                                                          value={password2} onChange={this.userChange}
-                                                         className={"bg-dark text-white"}
+                                                         className={"bg-light text-black"}
                                                          placeholder="Enter Password One More Time"/>
                                         </InputGroup>
                                     </Form.Group>
                                 </Form.Row>
                                 <Form.Row>
                                     <Form.Group as={Col}>
-                                        <Form.Label>Choose a method to store your password</Form.Label>
+                                        <Form.Label>Method</Form.Label>
                                         <Form.Control as="select"
-                                                      className={"bg-dark text-white"}
+                                                      className={"bg-light text-black"}
                                                       onChange={this.userChange}
                                                       name={"passStoreMethod"}
                                                       value={passStoreMethod}
@@ -118,10 +118,10 @@ export default class Register extends Component {
                             <Card.Footer style={{"textAlign": "right"}}>
                                 <Button size="sm" type="button" variant="success" onClick={this.submitRegisterForm}
                                         disabled={this.state.login.length === 0 || this.state.password.length === 0 || this.state.password !== this.state.password2}>
-                                    <FontAwesomeIcon icon={faUserPlus}/> Register
+                                    Register
                                 </Button>{' '}
                                 <Button size="sm" type="button" variant="info" onClick={this.resetRegisterForm}>
-                                    <FontAwesomeIcon icon={faUndo}/> Reset
+                                    Reset
                                 </Button>
                             </Card.Footer>
                         </Card>

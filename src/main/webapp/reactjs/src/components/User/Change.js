@@ -64,7 +64,7 @@ export default class Change extends Component {
                 </div>
                 <Row className="justify-content-md-center">
                     <Col xs={5}>
-                        <Card className={"border border-dark bg-dark text-white"}>
+                        <Card className={"border border-light bg-light text-black"}>
                             <Card.Header>
                                 <FontAwesomeIcon icon={faUserPlus}/> Change Password
                             </Card.Header>
@@ -77,7 +77,7 @@ export default class Change extends Component {
                                             </InputGroup.Prepend>
                                             <FormControl required autoComplete="off" type="text" name="login"
                                                          value={login} onChange={this.userChange}
-                                                         className={"bg-dark text-white"} placeholder="Enter Login"/>
+                                                         className={"bg-light text-black"} placeholder="Enter Login"/>
                                         </InputGroup>
                                     </Form.Group>
                                 </Form.Row>
@@ -89,7 +89,7 @@ export default class Change extends Component {
                                             </InputGroup.Prepend>
                                             <FormControl required autoComplete="off" type="password" name="password"
                                                          value={password} onChange={this.userChange}
-                                                         className={"bg-dark text-white"} placeholder="Enter Password"/>
+                                                         className={"bg-light text-black"} placeholder="Enter Password"/>
                                         </InputGroup>
                                     </Form.Group>
                                 </Form.Row>
@@ -101,7 +101,7 @@ export default class Change extends Component {
                                             </InputGroup.Prepend>
                                             <FormControl required autoComplete="off" type="password" name="password2"
                                                          value={password2} onChange={this.userChange}
-                                                         className={"bg-dark text-white"}
+                                                         className={"bg-light text-black"}
                                                          placeholder="Enter Password One More Time"/>
                                         </InputGroup>
                                     </Form.Group>
@@ -114,7 +114,7 @@ export default class Change extends Component {
                                             </InputGroup.Prepend>
                                             <FormControl required autoComplete="off" type="password" name="password3"
                                                          value={password3} onChange={this.userChange}
-                                                         className={"bg-dark text-white"}
+                                                         className={"bg-light text-black"}
                                                          placeholder="Enter Password One More Time"/>
                                         </InputGroup>
                                     </Form.Group>
@@ -123,7 +123,7 @@ export default class Change extends Component {
                                     <Form.Group as={Col}>
                                         <Form.Label>Choose a method to store your password</Form.Label>
                                         <Form.Control as="select"
-                                                      className={"bg-dark text-white"}
+                                                      className={"bg-light text-black"}
                                                       onChange={this.userChange}
                                                       name={"passStoreMethod"}
                                                       value={passStoreMethod}

@@ -16,19 +16,19 @@ export default class MyToast extends Component {
         return (
 
             <div style={this.props.show ? toastCss : null}>
-                <Toast
-                    className={`border text-white ${type === "success" ? "border-success bg-success" : "border-success bg-success"}`}
-                    show={this.props.show}>
-                    <Toast.Header className={`text-white ${type === "success" ? "bg-success" : "bg-success"}`}
-                                  closeButton={false}>
-                        <strong className="mr-auto">{message?message:"Success"}</strong>
-                    </Toast.Header>
-                    <Toast.Body>
-                        <div>
-                        {message}
-                        </div>
-                    </Toast.Body>
-                </Toast>
+                {/*<Toast*/}
+                {/*    className={`border text-black ${type === "success" ? "border-success bg-success" : "border-success bg-success"}`}*/}
+                {/*    show={this.props.show}>*/}
+                {/*    <Toast.Header className={`text-black ${type === "success" ? "bg-success" : "bg-success"}`}*/}
+                {/*                  closeButton={false}>*/}
+                {/*        <strong className="mr-auto">{message?message:"Success"}</strong>*/}
+                {/*    </Toast.Header>*/}
+                {/*    <Toast.Body>*/}
+                {/*        <div>*/}
+                {/*        {message}*/}
+                {/*        </div>*/}
+                {/*    </Toast.Body>*/}
+                {/*</Toast>*/}
             </div>
         );
     };

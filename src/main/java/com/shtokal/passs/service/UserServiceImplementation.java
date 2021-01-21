@@ -34,7 +34,9 @@ public class UserServiceImplementation implements UserService {
 
     public UserServiceImplementation(UserRepository userRepository,
                                      RoleRepository roleRepository,
-                                     PasswordService passwordService, LogService logService, FunctionRunRepository functionRunRepository) {
+                                     PasswordService passwordService,
+                                     LogService logService,
+                                     FunctionRunRepository functionRunRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordService = passwordService;

@@ -45,6 +45,7 @@ public class PasswordServiceImplementation implements PasswordService {
         this.functionRunRepository = functionRunRepository;
     }
 
+
     @Override
     public PasswordResponse findAllByUserLogin(String login, Pageable pageable) {
         Integer totalElements = passwordRepository.findAllByUser_LoginAndIsDeletedIsFalse(login).size();

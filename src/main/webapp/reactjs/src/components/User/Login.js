@@ -65,20 +65,20 @@ class Login extends Component {
             <Row className="justify-content-md-center">
                 <Col xs={5}>
                     {error && <Alert variant="danger">{error}</Alert>}
-                    <Card className={"border border-dark bg-dark text-white"}>
+                    <Card className={"border border-light bg-light text-black"}>
                         <Card.Header>
-                            <FontAwesomeIcon icon={faSignInAlt}/> Login
+                         Login
                         </Card.Header>
                         <Card.Body>
                             <Form.Row>
                                 <Form.Group as={Col}>
                                     <InputGroup>
                                         <InputGroup.Prepend>
-                                            <InputGroup.Text><FontAwesomeIcon icon={faEnvelope}/></InputGroup.Text>
+                                            <InputGroup.Text></InputGroup.Text>
                                         </InputGroup.Prepend>
                                         <FormControl required autoComplete="off" type="text" name="login" value={login}
                                                      onChange={this.credentialChange}
-                                                     className={"bg-dark text-white"} placeholder="Enter login"/>
+                                                     className={"bg-light text-black"} placeholder="Enter login"/>
                                     </InputGroup>
                                 </Form.Group>
                             </Form.Row>
@@ -86,11 +86,11 @@ class Login extends Component {
                                 <Form.Group as={Col}>
                                     <InputGroup>
                                         <InputGroup.Prepend>
-                                            <InputGroup.Text><FontAwesomeIcon icon={faLock}/></InputGroup.Text>
+                                            <InputGroup.Text></InputGroup.Text>
                                         </InputGroup.Prepend>
                                         <FormControl required autoComplete="off" type="password" name="password"
                                                      value={password} onChange={this.credentialChange}
-                                                     className={"bg-dark text-white"} placeholder="Enter Password"/>
+                                                     className={"bg-light text-black"} placeholder="Enter Password"/>
                                     </InputGroup>
                                 </Form.Group>
                             </Form.Row>
@@ -98,13 +98,13 @@ class Login extends Component {
                                 <Form.Group as={Col}>
                                     <Form.Label>Choose a method to store your password</Form.Label>
                                     <Form.Control as="select"
-                                                  className={"bg-dark text-white"}
+                                                  className={"bg-light text-black"}
                                                   onChange={this.userChange}
                                                   name={"mode"}
                                                   value={mode}
                                     >
-                                        <option value={"read"}>Read Only</option>
-                                        <option value={"write"}>Modify Mode</option>
+                                        <option value={"read"}>Read</option>
+                                        <option value={"write"}>Modify</option>
                                     </Form.Control>
                                 </Form.Group>
                             </Form.Row>
@@ -112,15 +112,15 @@ class Login extends Component {
                         <Card.Footer style={{"text-align": "right"}}>
                             <Button size="sm" type="button" variant="success" onClick={this.validateUser}
                                     disabled={this.state.login.length === 0 || this.state.password.length === 0}>
-                                <FontAwesomeIcon icon={faSignInAlt}/> Login
+                                Login
                             </Button>{' '}
                             <Button size="sm" type="button" variant="info" onClick={this.resetLoginForm}
                                     disabled={this.state.login.length === 0 && this.state.password.length === 0 && this.state.error.length === 0}>
-                                <FontAwesomeIcon icon={faUndo}/> Reset
+                                Reset
                             </Button>
                         </Card.Footer>
                     </Card>
-                    <Card className={"border border-dark bg-dark text-white"}>
+                    <Card className={"border border-light bg-light text-black"}>
                         <Card.Header>
                             {lastSuccess!=null? lastSuccess : "no attempts found"}
                         </Card.Header>

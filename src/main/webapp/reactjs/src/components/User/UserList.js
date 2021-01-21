@@ -93,10 +93,10 @@ class UserList extends Component {
                     <Alert variant="danger">
                         {userData.error}
                     </Alert> :
-                    <Card className={"border border-dark bg-dark text-white"}>
+                    <Card className={"border border-light bg-light text-black"}>
                         <Card.Header><FontAwesomeIcon icon={faUsers} /> User List</Card.Header>
                         <Card.Body>
-                            <Table bordered hover striped variant="dark">
+                            <Table bordered hover striped variant="light">
                                 <thead>
                                     <tr>
                                         <td>Name</td>
@@ -141,7 +141,7 @@ class UserList extends Component {
                                                 <FontAwesomeIcon icon={faStepBackward} /> Prev
                                             </Button>
                                         </InputGroup.Prepend>
-                                        <FormControl className={"page-num bg-dark"} name="currentPage" value={currentPage}
+                                        <FormControl className={"page-num bg-light"} name="currentPage" value={currentPage}
                                             onChange={this.changePage}/>
                                         <InputGroup.Append>
                                             <Button type="button" variant="outline-info" disabled={currentPage === totalPages}
